@@ -1,0 +1,11 @@
+node_modules/
+dist/
+ios/
+android/
+.DS_Store
+*.log
+.env
+.env.*
+
+# Audio originals backup (large unprocessed files)
+public/audio/_originals/
