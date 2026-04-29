@@ -100,7 +100,7 @@ export const CONFIG = {
     accent: '#4a90a4',
     text: '#e8e4df',
     textMuted: '#8a8692',
-    textDim: '#5a5666',
+    textDim: '#7a7682',
     timerActive: '#6bb88f',
     premium: '#c9a84c',
     premiumGlow: '#e6c96a',

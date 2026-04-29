@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { RAIN_WINDOW_CONFIG } from './rainWindowConfig';
 import { RainGlassOverlay } from '../effects/RainGlassOverlay';
 import { CondensationTrail } from '../effects/CondensationTrail';
+import { IScene, SceneInitParams, HitResult } from './IScene';
 
 /**
  * Rain Window interactive scene.
@@ -14,14 +15,17 @@ import { CondensationTrail } from '../effects/CondensationTrail';
  *
  * No room geometry — the skybox is the entire visual.
  */
-export class RainWindowScene {
+export class RainWindowScene implements IScene {
+  readonly id = 'rain-window';
   readonly group: THREE.Group;
   private interactionPlane: THREE.Mesh;
   private rainOverlay: RainGlassOverlay;
   private condensationTrail: CondensationTrail;
   private raycaster: THREE.Raycaster;
+  private _ndc = new THREE.Vector2();
+  private _camera: THREE.Camera | null = null;
 
-  constructor(scene: THREE.Scene) {
+  constructor() {
     this.group = new THREE.Group();
     this.raycaster = new THREE.Raycaster();
 
@@ -29,14 +33,11 @@ export class RainWindowScene {
     const pos = new THREE.Vector3(cfg.plane.x, cfg.plane.y, cfg.plane.z);
 
     // ── Glass interaction plane ────────────────────────────
-    // Near-invisible surface for raycasting + subtle glass sheen
     const planeGeo = new THREE.PlaneGeometry(cfg.plane.width, cfg.plane.height);
-    const planeMat = new THREE.MeshStandardMaterial({
+    const planeMat = new THREE.MeshBasicMaterial({
       color: cfg.glass.color,
       transparent: true,
       opacity: cfg.glass.opacity,
-      roughness: cfg.glass.roughness,
-      metalness: cfg.glass.metalness,
       side: THREE.DoubleSide,
       depthWrite: false,
     });
@@ -66,46 +67,58 @@ export class RainWindowScene {
       cfg.plane.height,
       cfg.trail,
     );
+  }
 
+  init({ scene, camera }: SceneInitParams): void {
+    this._camera = camera;
     scene.add(this.group);
   }
 
   /**
-   * Raycast from screen coordinates to the interaction plane.
-   * Returns UV coordinates (0–1) if hit, null if missed.
-   *
-   * @param ndcX  Normalized device X (-1 to 1)
-   * @param ndcY  Normalized device Y (-1 to 1)
-   * @param camera  The scene camera
+   * IScene hitTest — accepts NDC Vector2.
+   * Also supports legacy (ndcX, ndcY, camera) call pattern via overloaded helper.
    */
-  hitTest(
+  hitTest(ndc: THREE.Vector2): HitResult | null {
+    if (!this._camera) return null;
+    this._ndc.set(ndc.x, ndc.y);
+    this.raycaster.setFromCamera(this._ndc, this._camera);
+    const hits = this.raycaster.intersectObject(this.interactionPlane);
+    if (hits.length === 0 || !hits[0].uv) return null;
+    return {
+      uv: new THREE.Vector2(hits[0].uv.x, hits[0].uv.y),
+      surface: 'glass',
+    };
+  }
+
+  /**
+   * Legacy hit test used by Game.ts input callbacks.
+   * Returns UV {u, v} if hit, null if missed.
+   */
+  hitTestLegacy(
     ndcX: number,
     ndcY: number,
     camera: THREE.Camera,
   ): { u: number; v: number } | null {
-    this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
+    this._ndc.set(ndcX, ndcY);
+    this.raycaster.setFromCamera(this._ndc, camera);
     const hits = this.raycaster.intersectObject(this.interactionPlane);
     if (hits.length === 0 || !hits[0].uv) return null;
     return { u: hits[0].uv.x, v: hits[0].uv.y };
   }
 
-  /** Draw condensation line at UV during drag */
   drawTrail(u: number, v: number): void {
     this.condensationTrail.draw(u, v);
   }
 
-  /** Draw tap ripple at UV */
   drawRipple(u: number, v: number): void {
     const cfg = RAIN_WINDOW_CONFIG.ripple;
     this.condensationTrail.drawRipple(u, v, cfg.radius, cfg.opacity);
   }
 
-  /** End drag tracking (resets line continuity) */
   endTrail(): void {
     this.condensationTrail.endDrag();
   }
 
-  /** Call every frame */
   update(dt: number): void {
     this.rainOverlay.update(dt);
     this.condensationTrail.update();

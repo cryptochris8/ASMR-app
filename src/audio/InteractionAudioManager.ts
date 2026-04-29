@@ -1,4 +1,4 @@
-import { SceneId } from '../game/state';
+import { SceneId, Store } from '../game/state';
 import { AudioAssetRef, SceneAudioDef, InteractionAudioConfig, SurfaceType } from './types';
 import { getSceneAudio } from './sceneAudioRegistry';
 
@@ -70,8 +70,11 @@ export class InteractionAudioManager {
   private ambientTimerId: number | null = null;
   private lastOneShotTimes: Map<string, number> = new Map();
 
-  constructor(config?: Partial<InteractionAudioConfig>) {
+  constructor(config?: Partial<InteractionAudioConfig>, store?: Store) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+    if (store) {
+      store.subscribe(() => this.setMasterVolume(store.state.interactionVolume));
+    }
   }
 
   /** Initialize with an existing AudioContext (shared with main AudioManager) */
@@ -164,15 +167,20 @@ export class InteractionAudioManager {
   }
 
   private stopAllAmbience(): void {
-    for (const { source, gainNode } of this.activeAmbientSources) {
+    const oldSources = this.activeAmbientSources;
+    this.activeAmbientSources = [];
+    for (const { source, gainNode } of oldSources) {
       if (this.ctx) {
         gainNode.gain.setTargetAtTime(0, this.ctx.currentTime, 0.3);
       }
-      setTimeout(() => {
-        try { source.stop(); } catch {}
-      }, 1000);
     }
-    this.activeAmbientSources = [];
+    setTimeout(() => {
+      for (const { source, gainNode } of oldSources) {
+        try { source.stop(); } catch {}
+        try { source.disconnect(); } catch {}
+        try { gainNode.disconnect(); } catch {}
+      }
+    }, 1000);
   }
 
   // =============================================
@@ -199,7 +207,7 @@ export class InteractionAudioManager {
     if (!pool || pool.sounds.length === 0) return;
 
     // Anti-repeat: pick random, but not the same as last
-    const surfaceKey = pool.surface;
+    const surfaceKey = `${pool.surface ?? '_'}::${pool.sounds[0]?.id ?? ''}`;
     const lastId = this.lastTapId.get(surfaceKey);
     let candidates = pool.sounds;
     if (candidates.length > 1 && lastId) {
@@ -231,6 +239,8 @@ export class InteractionAudioManager {
 
     source.onended = () => {
       this.activeTapCount = Math.max(0, this.activeTapCount - 1);
+      try { source.disconnect(); } catch {}
+      try { gain.disconnect(); } catch {}
     };
   }
 
@@ -417,10 +427,30 @@ export class InteractionAudioManager {
 
     this.lastOneShotTimes.set(chosen.id, now);
 
-    // Fade out near end
     source.onended = () => {
-      // Cleanup happens naturally
+      try { source.disconnect(); } catch {}
+      try { gain.disconnect(); } catch {}
     };
+  }
+
+  // =============================================
+  // CONTEXT LIFECYCLE
+  // =============================================
+
+  async resumeContext(): Promise<void> {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      try { await this.ctx.resume(); } catch {}
+    }
+  }
+
+  async dispose(): Promise<void> {
+    this.unloadScene();
+    try { this.masterGain?.disconnect(); } catch {}
+    await this.ctx?.close?.();
+    this.ctx = null;
+    this.masterGain = null;
+    this.buffers.clear();
+    this.loadingPromises.clear();
   }
 
   // =============================================

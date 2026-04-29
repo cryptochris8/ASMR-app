@@ -5,7 +5,8 @@ import { AudioManager } from '../audio/AudioManager';
 export class SleepTimer {
   private store: Store;
   private audio: AudioManager;
-  private intervalId: number | null = null;
+  private timerHandle: number | null = null;
+  private endTime: number = 0;
   private dimOverlay: HTMLElement | null = null;
 
   constructor(store: Store, audio: AudioManager) {
@@ -14,7 +15,7 @@ export class SleepTimer {
   }
 
   start(durationMs: number): void {
-    this.stop(); // Clear any existing timer
+    this.stop();
 
     this.store.update({
       timerActive: true,
@@ -23,36 +24,52 @@ export class SleepTimer {
       lastUsedTimerMs: durationMs,
     });
 
-    const tickInterval = 1000;
-    this.intervalId = window.setInterval(() => {
-      const remaining = this.store.state.timerRemainingMs - tickInterval;
+    this.endTime = Date.now() + durationMs;
+    this.scheduleTick();
+  }
 
-      if (remaining <= 0) {
-        this.onTimerEnd();
-        return;
-      }
+  private scheduleTick = (): void => {
+    this.timerHandle = window.setTimeout(this.tick, 1000);
+  };
 
-      this.store.update({ timerRemainingMs: remaining });
+  private tick = (): void => {
+    const remaining = Math.max(0, this.endTime - Date.now());
 
-      // Start fading audio in the last phase
-      if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerFadeAudio) {
-        const fadeProgress = 1 - (remaining / CONFIG.timerFadeDuration);
-        const targetVolume = this.store.state.masterVolume * (1 - fadeProgress);
-        this.audio.fadeMasterTo(Math.max(0, targetVolume), tickInterval);
-      }
+    if (remaining <= 0) {
+      this.handleEnd();
+      return;
+    }
 
-      // Dim screen gradually
-      if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerDimScreen) {
-        const fadeProgress = remaining / CONFIG.timerFadeDuration;
-        this.updateDimOverlay(1 - fadeProgress);
-      }
-    }, tickInterval);
+    this.store.update({ timerRemainingMs: remaining });
+
+    if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerFadeAudio) {
+      const fadeProgress = 1 - (remaining / CONFIG.timerFadeDuration);
+      const targetVolume = this.store.state.masterVolume * (1 - fadeProgress);
+      this.audio.fadeMasterTo(Math.max(0, targetVolume), 1000);
+    }
+
+    if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerDimScreen) {
+      const fadeProgress = remaining / CONFIG.timerFadeDuration;
+      this.updateDimOverlay(1 - fadeProgress);
+    }
+
+    this.scheduleTick();
+  };
+
+  /** Resync after the app returns from background — fires tick immediately without waiting. */
+  resync(): void {
+    if (!this.store.state.timerActive) return;
+    if (this.timerHandle !== null) {
+      window.clearTimeout(this.timerHandle);
+      this.timerHandle = null;
+    }
+    this.tick();
   }
 
   stop(): void {
-    if (this.intervalId !== null) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (this.timerHandle !== null) {
+      window.clearTimeout(this.timerHandle);
+      this.timerHandle = null;
     }
 
     this.store.update({
@@ -60,20 +77,23 @@ export class SleepTimer {
       timerRemainingMs: 0,
     });
 
-    // Restore volume
     this.audio.fadeMasterTo(this.store.state.masterVolume, 500);
-
-    // Remove dim overlay
     this.removeDimOverlay();
   }
 
-  private onTimerEnd(): void {
-    this.stop();
+  private handleEnd(): void {
+    if (this.timerHandle !== null) {
+      window.clearTimeout(this.timerHandle);
+      this.timerHandle = null;
+    }
 
-    // Fade out all audio
+    this.store.update({
+      timerActive: false,
+      timerRemainingMs: 0,
+    });
+
     this.audio.fadeMasterTo(0, 3000);
 
-    // Full dim
     if (this.store.state.timerDimScreen) {
       this.updateDimOverlay(CONFIG.timerDimOpacity);
     }

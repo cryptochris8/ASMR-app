@@ -1,56 +1,61 @@
+import { UIPanel } from './UIPanel';
 import { Store } from '../game/state';
 import { CONFIG } from '../game/config';
 import { AudioManager } from '../audio/AudioManager';
-import { getPacksForScene, SoundPack } from '../content/soundPacks';
+import { getPacksForScene } from '../content/soundPacks';
 
-export class MixerPanel {
-  private el: HTMLElement;
+export class MixerPanel extends UIPanel {
   private store: Store;
   private audio: AudioManager;
+  private escapeHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(container: HTMLElement, store: Store, audio: AudioManager) {
+    super(container, 'mixer-panel');
     this.store = store;
     this.audio = audio;
-
-    this.el = document.createElement('div');
-    this.el.className = 'mixer-panel';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
   }
 
   show(): void {
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
+    this.escapeHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') this.hide();
+    };
+    document.addEventListener('keydown', this.escapeHandler);
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.style.display = 'none';
-    }, 300);
+    this.element.style.opacity = '0';
+    setTimeout(() => { this.element.style.display = 'none'; }, 300);
+    if (this.escapeHandler) {
+      document.removeEventListener('keydown', this.escapeHandler);
+      this.escapeHandler = null;
+    }
   }
 
-  private render(): void {
+  protected render(): void {
     const { masterVolume, ambientVolume, interactionVolume, activeScene, subscriptionTier } = this.store.state;
     const isPremium = subscriptionTier === 'premium';
     const packs = getPacksForScene(activeScene);
 
-    this.el.innerHTML = `
+    this.element.setAttribute('role', 'dialog');
+    this.element.setAttribute('aria-modal', 'true');
+    this.element.setAttribute('aria-labelledby', 'mixer-title');
+
+    this.element.innerHTML = `
       <div class="mixer-backdrop"></div>
       <div class="mixer-sheet">
         <div class="mixer-handle"></div>
-        <h2 class="mixer-title">Sound Mixer</h2>
+        <h2 class="mixer-title" id="mixer-title">Sound Mixer</h2>
 
         <div class="mixer-section">
           <div class="mixer-slider-row">
             <span class="mixer-label">Master</span>
             <input type="range" class="mixer-slider" min="0" max="100"
-                   value="${Math.round(masterVolume * 100)}" data-target="master"/>
+                   value="${Math.round(masterVolume * 100)}" data-target="master"
+                   aria-label="Master volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(masterVolume * 100)}"/>
             <span class="mixer-value">${Math.round(masterVolume * 100)}%</span>
           </div>
         </div>
@@ -61,14 +66,16 @@ export class MixerPanel {
           <div class="mixer-slider-row">
             <span class="mixer-label">Ambient</span>
             <input type="range" class="mixer-slider" min="0" max="100"
-                   value="${Math.round(ambientVolume * 100)}" data-target="ambient"/>
+                   value="${Math.round(ambientVolume * 100)}" data-target="ambient"
+                   aria-label="Ambient volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(ambientVolume * 100)}"/>
             <span class="mixer-value">${Math.round(ambientVolume * 100)}%</span>
           </div>
 
           <div class="mixer-slider-row">
             <span class="mixer-label">Interaction</span>
             <input type="range" class="mixer-slider" min="0" max="100"
-                   value="${Math.round(interactionVolume * 100)}" data-target="interaction"/>
+                   value="${Math.round(interactionVolume * 100)}" data-target="interaction"
+                   aria-label="Interaction volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(interactionVolume * 100)}"/>
             <span class="mixer-value">${Math.round(interactionVolume * 100)}%</span>
           </div>
         </div>
@@ -80,7 +87,7 @@ export class MixerPanel {
               <span class="mixer-label">${pack.name}</span>
               ${pack.premium && !isPremium
                 ? '<span class="mixer-premium-badge">Premium</span>'
-                : `<button class="mixer-layer-toggle" data-pack="${pack.id}">
+                : `<button class="mixer-layer-toggle" data-pack="${pack.id}" aria-label="${pack.name} layer ${this.isLayerActive(pack.id) ? 'on' : 'off'}, tap to toggle">
                     ${this.isLayerActive(pack.id) ? 'On' : 'Off'}
                    </button>`
               }
@@ -92,16 +99,38 @@ export class MixerPanel {
       </div>
     `;
 
-    // Bind events
-    this.el.querySelector('.mixer-backdrop')?.addEventListener('click', () => this.hide());
-    this.el.querySelector('.mixer-close-btn')?.addEventListener('click', () => this.hide());
+    const sheet = this.element.querySelector('.mixer-sheet') as HTMLElement;
+    let startY = 0;
+    sheet.addEventListener('touchstart', (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    sheet.addEventListener('touchmove', (e: TouchEvent) => {
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) sheet.style.transform = `translateY(${dy}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', (e: TouchEvent) => {
+      const dy = e.changedTouches[0].clientY - startY;
+      if (dy > 80) {
+        sheet.style.transform = '';
+        this.hide();
+      } else {
+        sheet.style.transition = 'transform 0.2s ease';
+        sheet.style.transform = 'translateY(0)';
+        setTimeout(() => { sheet.style.transition = ''; }, 200);
+      }
+    });
 
-    this.el.querySelectorAll('.mixer-slider').forEach(slider => {
+    this.element.querySelector('.mixer-backdrop')?.addEventListener('click', () => this.hide());
+    this.element.querySelector('.mixer-close-btn')?.addEventListener('click', () => this.hide());
+
+    this.element.querySelectorAll('.mixer-slider').forEach(slider => {
       slider.addEventListener('input', (e) => {
         const target = (slider as HTMLInputElement).getAttribute('data-target');
-        const value = parseInt((e.target as HTMLInputElement).value, 10) / 100;
+        const rawVal = parseInt((e.target as HTMLInputElement).value, 10);
+        const value = rawVal / 100;
         const valueEl = slider.parentElement?.querySelector('.mixer-value');
-        if (valueEl) valueEl.textContent = `${Math.round(value * 100)}%`;
+        if (valueEl) valueEl.textContent = `${rawVal}%`;
+        (slider as HTMLInputElement).setAttribute('aria-valuenow', String(rawVal));
 
         if (target === 'master') this.store.update({ masterVolume: value });
         else if (target === 'ambient') this.store.update({ ambientVolume: value });
@@ -109,7 +138,7 @@ export class MixerPanel {
       });
     });
 
-    this.el.querySelectorAll('.mixer-layer-toggle').forEach(btn => {
+    this.element.querySelectorAll('.mixer-layer-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
         const packId = btn.getAttribute('data-pack');
         if (packId) this.toggleLayer(packId);
@@ -149,7 +178,7 @@ export class MixerPanel {
     }
 
     this.store.update({ activeLayers: layers });
-    this.render(); // Re-render to update toggle states
+    this.render();
   }
 
   private applyStyles(): void {
@@ -230,6 +259,7 @@ export class MixerPanel {
         padding: 6px 16px; color: ${CONFIG.colors.text};
         font-size: 12px; cursor: pointer;
         transition: background 0.2s;
+        min-height: 44px;
       }
       .mixer-layer-toggle:active { background: ${CONFIG.colors.primary}30; }
       .mixer-premium-badge {

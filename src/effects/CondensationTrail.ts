@@ -24,6 +24,8 @@ export class CondensationTrail {
   // Track previous drag position for smooth line drawing
   private lastU = -1;
   private lastV = -1;
+  private _dirty = false;
+  private _idleFrames = 0;
 
   constructor(
     group: THREE.Group,
@@ -81,6 +83,8 @@ export class CondensationTrail {
 
     this.lastU = u;
     this.lastV = v;
+    this._dirty = true;
+    this._idleFrames = 0;
   }
 
   /** Draw a soft radial ripple at UV coordinates (called on tap) */
@@ -98,6 +102,8 @@ export class CondensationTrail {
     this.ctx.beginPath();
     this.ctx.arc(x, y, radius, 0, Math.PI * 2);
     this.ctx.fill();
+    this._dirty = true;
+    this._idleFrames = 0;
   }
 
   /** Reset drag tracking (call on pointer up) */
@@ -108,14 +114,21 @@ export class CondensationTrail {
 
   /** Fade existing trails and update the texture (call every frame) */
   update(): void {
-    // Erase existing content gradually using destination-out
-    this.ctx.globalCompositeOperation = 'destination-out';
-    this.ctx.globalAlpha = this.config.fadeRate;
-    this.ctx.fillRect(0, 0, this.config.canvasSize, this.config.canvasSize);
-    this.ctx.globalCompositeOperation = 'source-over';
-    this.ctx.globalAlpha = 1;
+    this._idleFrames++;
+    if (this._idleFrames <= 100) {
+      // Erase existing content gradually using destination-out
+      this.ctx.globalCompositeOperation = 'destination-out';
+      this.ctx.globalAlpha = this.config.fadeRate;
+      this.ctx.fillRect(0, 0, this.config.canvasSize, this.config.canvasSize);
+      this.ctx.globalCompositeOperation = 'source-over';
+      this.ctx.globalAlpha = 1;
+      this._dirty = true;
+    }
 
-    this.texture.needsUpdate = true;
+    if (this._dirty) {
+      this.texture.needsUpdate = true;
+      this._dirty = false;
+    }
   }
 
   clear(): void {

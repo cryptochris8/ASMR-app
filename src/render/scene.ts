@@ -20,11 +20,10 @@ export function switchSceneBackground(scene: THREE.Scene, sceneId: SceneId): voi
   // No fog for skybox scenes — it washes out the panorama
   scene.fog = null;
 
-  // Load skybox texture with per-scene rotation
   loadSkybox(scene, sceneId);
 }
 
-function loadSkybox(scene: THREE.Scene, sceneId: SceneId): void {
+export function loadSkybox(scene: THREE.Scene, sceneId: SceneId): void {
   const sceneDef = getSceneDef(sceneId);
   if (!sceneDef) return;
 
@@ -36,6 +35,7 @@ function loadSkybox(scene: THREE.Scene, sceneId: SceneId): void {
     (texture) => {
       texture.mapping = THREE.EquirectangularReflectionMapping;
       texture.colorSpace = THREE.SRGBColorSpace;
+      if (scene.background && (scene.background as any).dispose) (scene.background as any).dispose();
       scene.background = texture;
       scene.backgroundRotation = new THREE.Euler(0, sceneDef.skyboxRotationY, 0);
     },
@@ -43,58 +43,17 @@ function loadSkybox(scene: THREE.Scene, sceneId: SceneId): void {
     () => {
       // Skybox file not found — keep solid color fallback
       const colors = CONFIG.sceneColors[sceneId];
+      if (scene.background && (scene.background as any).dispose) (scene.background as any).dispose();
       scene.background = new THREE.Color(colors?.fog ?? CONFIG.bgColor);
     },
   );
 }
 
-// --- Scene-specific 3D effect builders ---
-// Skybox-based scenes need no geometry — the panorama is the visual.
-// Audio + interactions provide the experience.
-
-export function buildRainWindowScene(scene: THREE.Scene): THREE.Group {
-  const group = new THREE.Group();
-  scene.add(group);
-  return group;
-}
-
-export function buildCozyRoomScene(scene: THREE.Scene): THREE.Group {
-  const group = new THREE.Group();
-  scene.add(group);
-  return group;
-}
-
-export function buildSandTableScene(scene: THREE.Scene): THREE.Group {
-  const group = new THREE.Group();
-
-  // Table surface
-  const tableGeo = new THREE.CylinderGeometry(2, 2, 0.15, 48);
-  const tableMat = new THREE.MeshStandardMaterial({ color: 0x4a3a2a, roughness: 0.95 });
-  const table = new THREE.Mesh(tableGeo, tableMat);
-  table.position.set(0, 0.8, 0);
-  group.add(table);
-
-  // Sand surface
-  const sandGeo = new THREE.CircleGeometry(1.9, 48);
-  const sandMat = new THREE.MeshStandardMaterial({
-    color: 0xd4c4a0,
-    roughness: 1.0,
-    metalness: 0.0,
+export function disposeGroup(obj: THREE.Object3D): void {
+  obj.traverse((o: any) => {
+    if (o.geometry) o.geometry.dispose?.();
+    const m = o.material;
+    if (Array.isArray(m)) m.forEach((x: any) => x?.dispose?.());
+    else if (m) m.dispose?.();
   });
-  const sand = new THREE.Mesh(sandGeo, sandMat);
-  sand.rotation.x = -Math.PI / 2;
-  sand.position.set(0, 0.88, 0);
-  sand.name = 'sand-surface';
-  group.add(sand);
-
-  // Table rim
-  const rimGeo = new THREE.TorusGeometry(2, 0.06, 8, 48);
-  const rimMat = new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 0.8 });
-  const rim = new THREE.Mesh(rimGeo, rimMat);
-  rim.rotation.x = Math.PI / 2;
-  rim.position.set(0, 0.88, 0);
-  group.add(rim);
-
-  scene.add(group);
-  return group;
 }

@@ -1,9 +1,10 @@
+import { UIPanel } from './UIPanel';
 import { Store } from '../game/state';
 import { CONFIG } from '../game/config';
 import { SubscriptionManager } from '../game/subscription';
+import { nightOverlay } from './NightOverlay';
 
-export class SettingsScreen {
-  private el: HTMLElement;
+export class SettingsScreen extends UIPanel {
   private store: Store;
   private subscriptionManager: SubscriptionManager;
   private onClose: () => void;
@@ -14,38 +15,30 @@ export class SettingsScreen {
     subscriptionManager: SubscriptionManager,
     onClose: () => void,
   ) {
+    super(container, 'settings-screen');
     this.store = store;
     this.subscriptionManager = subscriptionManager;
     this.onClose = onClose;
-
-    this.el = document.createElement('div');
-    this.el.className = 'settings-screen';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
   }
 
   show(): void {
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.style.display = 'none';
-    }, 300);
+    this.element.style.opacity = '0';
+    setTimeout(() => { this.element.style.display = 'none'; }, 300);
   }
 
-  private render(): void {
-    const { hapticsEnabled, timerFadeAudio, timerDimScreen, subscriptionTier } = this.store.state;
+  protected render(): void {
+    const { hapticsEnabled, timerFadeAudio, timerDimScreen, subscriptionTier, warmScreenTintEnabled } = this.store.state;
     const isPremium = subscriptionTier === 'premium';
+    const warmTint = warmScreenTintEnabled;
 
-    this.el.innerHTML = `
+    this.element.innerHTML = `
       <div class="settings-header">
         <button class="settings-back-btn" aria-label="Back">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${CONFIG.colors.text}" stroke-width="1.5">
@@ -73,6 +66,14 @@ export class SettingsScreen {
         </div>
 
         <div class="settings-section">
+          <div class="settings-section-label">Display</div>
+          <label class="settings-row">
+            <span>Warm screen tint</span>
+            <input type="checkbox" ${warmTint ? 'checked' : ''} data-setting="warmTint"/>
+          </label>
+        </div>
+
+        <div class="settings-section">
           <div class="settings-section-label">Subscription</div>
           <div class="settings-row">
             <span>Status</span>
@@ -95,28 +96,38 @@ export class SettingsScreen {
           <button class="settings-link-btn">Privacy Policy</button>
           <button class="settings-link-btn">Terms of Service</button>
           <button class="settings-link-btn">Contact Support</button>
+          <button class="settings-replay-onboarding-btn">Replay Introduction</button>
         </div>
       </div>
     `;
 
-    // Bind events
-    this.el.querySelector('.settings-back-btn')?.addEventListener('click', () => {
+    this.element.querySelector('.settings-back-btn')?.addEventListener('click', () => {
       this.hide();
       this.onClose();
     });
 
-    this.el.querySelectorAll('input[data-setting]').forEach(input => {
+    this.element.querySelectorAll('input[data-setting]').forEach(input => {
       input.addEventListener('change', (e) => {
         const setting = (input as HTMLInputElement).getAttribute('data-setting');
         const checked = (e.target as HTMLInputElement).checked;
         if (setting === 'haptics') this.store.update({ hapticsEnabled: checked });
         else if (setting === 'timerFade') this.store.update({ timerFadeAudio: checked });
         else if (setting === 'timerDim') this.store.update({ timerDimScreen: checked });
+        else if (setting === 'warmTint') {
+          this.store.update({ warmScreenTintEnabled: checked });
+          nightOverlay.setEnabled(checked);
+        }
       });
     });
 
-    this.el.querySelector('.settings-restore-btn')?.addEventListener('click', () => {
+    this.element.querySelector('.settings-restore-btn')?.addEventListener('click', () => {
       this.subscriptionManager.restorePurchases();
+    });
+
+    this.element.querySelector('.settings-replay-onboarding-btn')?.addEventListener('click', () => {
+      (this.store.state as any).onboardingComplete = false;
+      this.store.update({ onboardingComplete: false });
+      window.location.reload();
     });
   }
 
@@ -140,6 +151,7 @@ export class SettingsScreen {
       }
       .settings-back-btn {
         background: none; border: none; cursor: pointer; padding: 8px;
+        min-height: 44px; min-width: 44px;
       }
       .settings-title {
         font-size: 20px; font-weight: 400;
@@ -201,6 +213,7 @@ export class SettingsScreen {
         background: none; border: none;
         color: ${CONFIG.colors.primary}; font-size: 14px;
         cursor: pointer; text-align: center;
+        min-height: 44px;
       }
       .settings-link-btn {
         display: block; width: 100%;
@@ -209,6 +222,13 @@ export class SettingsScreen {
         border-bottom: 1px solid ${CONFIG.colors.surfaceLight}40;
         color: ${CONFIG.colors.text}; font-size: 14px;
         cursor: pointer;
+      }
+      .settings-replay-onboarding-btn {
+        display: block; width: 100%;
+        padding: 14px 0; text-align: left;
+        background: none; border: none;
+        color: ${CONFIG.colors.textMuted}; font-size: 14px;
+        cursor: pointer; margin-top: 4px;
       }
     `;
     document.head.appendChild(style);

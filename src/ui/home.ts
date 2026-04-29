@@ -1,9 +1,9 @@
+import { UIPanel } from './UIPanel';
 import { Store, SceneId } from '../game/state';
 import { SCENES } from '../content/scenes';
 import { CONFIG } from '../game/config';
 
-export class HomeScreen {
-  private el: HTMLElement;
+export class HomeScreen extends UIPanel {
   private store: Store;
   private onSceneSelect: (sceneId: SceneId) => void;
   private onTimerShortcut: () => void;
@@ -16,39 +16,36 @@ export class HomeScreen {
     onTimerShortcut: () => void,
     onSettingsOpen: () => void,
   ) {
+    super(container, 'home-screen');
     this.store = store;
     this.onSceneSelect = onSceneSelect;
     this.onTimerShortcut = onTimerShortcut;
     this.onSettingsOpen = onSettingsOpen;
-
-    this.el = document.createElement('div');
-    this.el.className = 'home-screen';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
   }
 
   show(): void {
+    this.beforeShow?.();
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
+    this.afterShow?.();
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
+    this.beforeHide?.();
+    this.element.style.opacity = '0';
     setTimeout(() => {
-      this.el.style.display = 'none';
+      this.element.style.display = 'none';
+      this.afterHide?.();
     }, CONFIG.uiFadeOutDuration);
   }
 
-  private render(): void {
+  protected render(): void {
     const { lastUsedScene, subscriptionTier } = this.store.state;
     const isPremium = subscriptionTier === 'premium';
 
-    this.el.innerHTML = `
+    this.element.innerHTML = `
       <div class="home-header">
         <h1 class="home-title">ASMR Sleep</h1>
         ${isPremium ? '<span class="home-premium-badge">PREMIUM</span>' : ''}
@@ -72,7 +69,8 @@ export class HomeScreen {
       <div class="home-scene-grid">
         ${SCENES.map(scene => `
           <button class="home-scene-card ${scene.premium && !isPremium ? 'locked' : ''}"
-                  data-scene="${scene.id}">
+                  data-scene="${scene.id}"
+                  aria-label="Open ${scene.name} scene${scene.premium && !isPremium ? ' (Premium)' : ''}">
             <div class="scene-card-thumb" style="background: #${scene.thumbnailColor.toString(16).padStart(6, '0')}20;">
               <div class="scene-card-glow" style="background: radial-gradient(circle, #${scene.thumbnailColor.toString(16).padStart(6, '0')}40 0%, transparent 70%);"></div>
             </div>
@@ -93,31 +91,36 @@ export class HomeScreen {
         <span>Set Sleep Timer</span>
       </button>
 
-      <button class="home-start-btn">Start Relaxing</button>
+      <button class="home-sleep-btn" aria-label="Quick sleep mode">Sleep</button>
     `;
 
-    // Bind events
-    this.el.querySelectorAll('.home-scene-card').forEach(card => {
+    this.element.querySelectorAll('.home-scene-card').forEach(card => {
       card.addEventListener('click', () => {
         const sceneId = card.getAttribute('data-scene') as SceneId;
         this.onSceneSelect(sceneId);
       });
     });
 
-    this.el.querySelector('.home-continue-btn')?.addEventListener('click', () => {
+    this.element.querySelector('.home-continue-btn')?.addEventListener('click', () => {
       if (lastUsedScene) this.onSceneSelect(lastUsedScene);
     });
 
-    this.el.querySelector('.home-timer-shortcut')?.addEventListener('click', () => {
+    this.element.querySelector('.home-timer-shortcut')?.addEventListener('click', () => {
       this.onTimerShortcut();
     });
 
-    this.el.querySelector('.home-settings-btn')?.addEventListener('click', () => {
+    this.element.querySelector('.home-settings-btn')?.addEventListener('click', () => {
       this.onSettingsOpen();
     });
 
-    this.el.querySelector('.home-start-btn')?.addEventListener('click', () => {
-      this.onSceneSelect(lastUsedScene ?? 'rain-window');
+    this.element.querySelector('.home-sleep-btn')?.addEventListener('click', () => {
+      const scene = this.store.state.lastUsedScene ?? 'rain-window';
+      const timerMs = this.store.state.lastUsedTimerMs || 30 * 60_000;
+      this.store.update({
+        lastUsedTimerMs: timerMs,
+        sleepModeRequested: true,
+      });
+      this.onSceneSelect(scene);
     });
   }
 
@@ -224,11 +227,11 @@ export class HomeScreen {
         background: none; border: 1px solid ${CONFIG.colors.surfaceLight};
         border-radius: 12px; padding: 14px 18px;
         color: ${CONFIG.colors.textMuted}; font-size: 14px;
-        cursor: pointer; margin-bottom: 24px;
+        cursor: pointer; margin-bottom: 16px;
         transition: border-color 0.2s;
       }
       .home-timer-shortcut:active { border-color: ${CONFIG.colors.timerActive}40; }
-      .home-start-btn {
+      .home-sleep-btn {
         width: 100%; padding: 16px;
         background: ${CONFIG.colors.primary};
         border: none; border-radius: 14px;
@@ -236,7 +239,7 @@ export class HomeScreen {
         letter-spacing: 0.5px; cursor: pointer;
         transition: background 0.2s;
       }
-      .home-start-btn:active { background: ${CONFIG.colors.primaryLight}; }
+      .home-sleep-btn:active { background: ${CONFIG.colors.primaryLight}; }
     `;
     document.head.appendChild(style);
   }

@@ -2,6 +2,24 @@ import { Store, AppState } from '../game/state';
 
 const SAVE_KEY = 'asmr-sleep-save';
 const SAVE_DEBOUNCE_MS = 2000;
+const SCHEMA_VERSION = 1;
+
+const TRANSIENT_KEYS: ReadonlyArray<keyof AppState> = [
+  'currentScreen',
+  'paywallShown',
+  'isInteracting',
+  'interactionType',
+  'timerActive',
+  'timerRemainingMs',
+  'sleepModeRequested',
+];
+
+function migrate(saved: any): any {
+  let v = saved.schemaVersion ?? 0;
+  // future: if (v === 1) { /* upgrade to 2 */; v = 2; }
+  saved.schemaVersion = SCHEMA_VERSION;
+  return saved;
+}
 
 export class SaveSystem {
   private store: Store;
@@ -16,15 +34,14 @@ export class SaveSystem {
       const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return;
 
-      const saved = JSON.parse(raw) as Partial<AppState>;
+      let saved = JSON.parse(raw) as Partial<AppState> & { schemaVersion?: number };
+      saved = migrate(saved);
 
-      // Don't restore transient state
-      delete saved.currentScreen;
-      delete saved.isInteracting;
-      delete saved.interactionType;
-      delete saved.timerActive;
-      delete saved.timerRemainingMs;
-      delete saved.paywallShown;
+      delete saved.schemaVersion;
+
+      for (const key of TRANSIENT_KEYS) {
+        delete saved[key];
+      }
 
       this.store.update(saved);
     } catch (err) {
@@ -45,17 +62,18 @@ export class SaveSystem {
 
   private save(): void {
     try {
-      const state = { ...this.store.state };
-      // Don't persist transient state
-      delete (state as any).currentScreen;
-      delete (state as any).isInteracting;
-      delete (state as any).interactionType;
-      delete (state as any).timerActive;
-      delete (state as any).timerRemainingMs;
+      const state: Partial<AppState> & { schemaVersion: number } = {
+        ...this.store.state,
+        schemaVersion: SCHEMA_VERSION,
+      };
+
+      for (const key of TRANSIENT_KEYS) {
+        delete state[key];
+      }
 
       localStorage.setItem(SAVE_KEY, JSON.stringify(state));
     } catch (err) {
-      console.warn('[Save] Failed to save:', err);
+      console.warn('[save] persist failed:', err);
     }
   }
 }

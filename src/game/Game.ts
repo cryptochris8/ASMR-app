@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import { CONFIG } from './config';
 import { Store, createInitialState, SceneId } from './state';
 import { SubscriptionManager } from './subscription';
+import { SceneController } from './SceneController';
 import { createRenderer } from '../render/renderer';
-import { createScene, switchSceneBackground, buildCozyRoomScene, buildSandTableScene } from '../render/scene';
+import { createScene, switchSceneBackground } from '../render/scene';
 import { createCamera } from '../render/camera';
 import { setupLighting, updateSceneLighting, SceneLights } from '../render/lighting';
 import { AudioManager } from '../audio/AudioManager';
@@ -15,7 +16,10 @@ import { SaveSystem } from '../systems/save';
 import { initNative } from '../systems/native';
 import { GyroLookSystem } from '../systems/gyro-look';
 import { RainWindowScene } from '../scenes/RainWindowScene';
+import { CozyRoomScene } from '../scenes/CozyRoomScene';
+import { SandTableScene } from '../scenes/SandTableScene';
 import { getScene } from '../content/scenes';
+import { nightOverlay } from '../ui/NightOverlay';
 import { SplashScreen } from '../ui/splash';
 import { HomeScreen } from '../ui/home';
 import { PlayerHUD } from '../ui/player';
@@ -40,12 +44,7 @@ export class Game {
   private saveSystem: SaveSystem;
   private clock: THREE.Clock;
   private container: HTMLElement;
-
-  // 3D scene groups
-  private currentSceneGroup: THREE.Group | null = null;
-
-  // Rain Window interactive scene
-  private rainWindowScene: RainWindowScene | null = null;
+  private sceneController: SceneController;
 
   // UI
   private homeScreen: HomeScreen;
@@ -54,6 +53,13 @@ export class Game {
   private mixerPanel: MixerPanel;
   private settingsScreen: SettingsScreen;
   private paywallScreen: PaywallScreen;
+
+  // Lifecycle
+  private paused = false;
+  private lastRenderTime = 0;
+  private lastInputTime = 0;
+  private lastDragHapticAt = 0;
+  private wakeLock: any = null;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -74,11 +80,17 @@ export class Game {
     this.camera = createCamera(container);
     this.lights = setupLighting(this.scene);
 
+    // Scene controller — registry of IScene factories
+    this.sceneController = new SceneController(this.scene, this.camera, container);
+    this.sceneController.register('rain-window', () => new RainWindowScene());
+    this.sceneController.register('cozy-room', () => new CozyRoomScene());
+    this.sceneController.register('sand-table', () => new SandTableScene());
+
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);
 
     // Audio — 3-layer interaction system (tap/drag/hold + ambient one-shots)
-    this.interactionAudio = new InteractionAudioManager(CONFIG.interaction);
+    this.interactionAudio = new InteractionAudioManager(CONFIG.interaction, this.store);
 
     // Systems
     this.hapticsSystem = new HapticsSystem();
@@ -109,15 +121,27 @@ export class Game {
 
     // Subscribe to state changes
     this.store.subscribe(() => {
-      // Timer display update
       if (this.store.state.currentScreen === 'player') {
         this.playerHUD.updateTimerDisplay();
       }
 
-      // Mute/unmute interaction audio to match
       if (this.interactionAudio.isReady()) {
         const vol = this.store.state.muted ? 0 : this.store.state.masterVolume;
         this.interactionAudio.setMasterVolume(vol);
+      }
+
+      nightOverlay.setEnabled(this.store.state.warmScreenTintEnabled);
+
+      if (this.store.state.sleepModeRequested) {
+        const timerMs = this.store.state.lastUsedTimerMs ?? 30 * 60_000;
+        this.store.update({
+          timerDurationMs: timerMs,
+          timerRemainingMs: timerMs,
+          dimScreenPreference: true,
+          timerFadeAudio: true,
+          sleepModeRequested: false,
+        });
+        this.sleepTimer.start(timerMs);
       }
     });
 
@@ -127,11 +151,14 @@ export class Game {
       firstLaunch: this.store.state.sessionCount === 0,
     });
 
-    // Show splash then home
-    new SplashScreen(container, () => {
-      this.store.update({ currentScreen: 'home' });
-      this.homeScreen.show();
-    });
+    // Visibility handler — handles app backgrounding/foregrounding
+    document.addEventListener('visibilitychange', this.onVisibility);
+
+    // Onboarding: show on first launch before home screen
+    this.startupFlow(container);
+
+    // Re-evaluate any persisted premium subscription against current wall clock
+    this.subscriptionManager.checkExpiry();
 
     // Start render loop
     this.animate();
@@ -140,11 +167,62 @@ export class Game {
     initNative();
   }
 
+  private async startupFlow(container: HTMLElement): Promise<void> {
+    new SplashScreen(container, async () => {
+      if (!this.store.state.onboardingComplete) {
+        try {
+          // Dynamic path prevents TS resolution error before Agent B lands the file
+          const mod = '../ui/onboarding' as string;
+          const { OnboardingScreen } = await import(/* @vite-ignore */ mod);
+          const onboarding = new OnboardingScreen(container);
+          onboarding.show(() => {
+            this.store.update({ onboardingComplete: true });
+            this.store.update({ currentScreen: 'home' });
+            this.homeScreen.show();
+          });
+        } catch {
+          // OnboardingScreen not yet available — fall through to home
+          this.store.update({ currentScreen: 'home' });
+          this.homeScreen.show();
+        }
+      } else {
+        this.store.update({ currentScreen: 'home' });
+        this.homeScreen.show();
+      }
+    });
+  }
+
+  private onVisibility = async (): Promise<void> => {
+    if (document.visibilityState === 'hidden') {
+      this.paused = true;
+      try { await this.wakeLock?.release?.(); } catch {}
+      this.wakeLock = null;
+    } else {
+      this.paused = false;
+      // Drain accumulated delta so the first rendered frame doesn't spike
+      this.clock.getDelta();
+      await (this.audioManager as any).resumeContext?.();
+      await (this.interactionAudio as any).resumeContext?.();
+      this.subscriptionManager.checkExpiry();
+      if (this.store.state.currentScreen === 'player') {
+        await this.acquireWakeLock();
+      }
+      this.sleepTimer?.resync?.();
+      requestAnimationFrame(this.animate);
+    }
+  };
+
+  private async acquireWakeLock(): Promise<void> {
+    try {
+      this.wakeLock = await (navigator as any).wakeLock?.request?.('screen');
+    } catch {}
+  }
+
   // =============================================
   // SCENE SELECTION
   // =============================================
 
-  private selectScene(sceneId: SceneId): void {
+  private async selectScene(sceneId: SceneId): Promise<void> {
     const sceneDef = getScene(sceneId);
     if (!sceneDef) return;
 
@@ -161,7 +239,6 @@ export class Game {
 
     // Enable gyroscope (iOS requires user gesture for permission)
     this.gyroLook.enable();
-    this.gyroLook.recalibrate();
 
     // Initialize interaction audio system with shared AudioContext
     if (!this.interactionAudio.isReady()) {
@@ -182,60 +259,25 @@ export class Game {
     this.homeScreen.hide();
     this.playerHUD.show();
 
-    // Build 3D scene
-    this.loadScene(sceneId);
-
-    // Load 3-layer interaction audio (base ambience + interactions + ambient one-shots)
-    this.interactionAudio.loadScene(sceneId);
-  }
-
-  // =============================================
-  // 3D SCENE MANAGEMENT
-  // =============================================
-
-  private loadScene(sceneId: SceneId): void {
-    // Clear previous scene objects
-    if (this.rainWindowScene) {
-      this.rainWindowScene.dispose();
-      this.rainWindowScene = null;
-    }
-    if (this.currentSceneGroup) {
-      this.scene.remove(this.currentSceneGroup);
-      this.currentSceneGroup = null;
-    }
-
-    // Transition background
+    // Transition background then load IScene
     switchSceneBackground(this.scene, sceneId);
-
-    // Update lighting
     const sceneColors = CONFIG.sceneColors[sceneId];
     if (sceneColors) {
       updateSceneLighting(this.lights, sceneColors.ambient, sceneColors.directional);
     }
+    await this.sceneController.load(sceneId);
 
-    // Build scene objects
-    switch (sceneId) {
-      case 'rain-window':
-        this.rainWindowScene = new RainWindowScene(this.scene);
-        this.currentSceneGroup = this.rainWindowScene.group;
-        break;
-      case 'cozy-room':
-        this.currentSceneGroup = buildCozyRoomScene(this.scene);
-        break;
-      case 'sand-table':
-        this.currentSceneGroup = buildSandTableScene(this.scene);
-        break;
-    }
-
-    // Setup interaction input for this scene
+    // Load interaction audio first, then bind input so callbacks are ready
+    await this.interactionAudio.loadScene(sceneId);
     this.setupInput();
+
+    await this.acquireWakeLock();
   }
 
   // =============================================
   // INPUT → INTERACTION AUDIO
   // =============================================
 
-  /** Convert screen pixel coordinates to NDC (-1 to 1) */
   private screenToNDC(x: number, y: number): { ndcX: number; ndcY: number } {
     return {
       ndcX: (x / window.innerWidth) * 2 - 1,
@@ -245,20 +287,22 @@ export class Game {
 
   private setupInput(): void {
     const surface = this.interactionAudio.getSceneSurface();
-    const isRainWindow = this.store.state.activeScene === 'rain-window';
+    const activeScene = this.store.state.activeScene;
+
+    this.inputSystem?.dispose();
 
     this.inputSystem = new InputSystem(this.container, {
-      // --- TAP: audio + visual ripple on glass ---
       onTap: (x, y) => {
+        this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
         this.interactionAudio.playTap(surface);
 
-        // Rain window: raycast → ripple on glass
-        if (isRainWindow && this.rainWindowScene) {
-          const { ndcX, ndcY } = this.screenToNDC(x, y);
-          const hit = this.rainWindowScene.hitTest(ndcX, ndcY, this.camera);
-          if (hit) {
-            this.rainWindowScene.drawRipple(hit.u, hit.v);
+        if (activeScene === 'rain-window') {
+          const rws = this.sceneController.current() as RainWindowScene | null;
+          if (rws) {
+            const { ndcX, ndcY } = this.screenToNDC(x, y);
+            const hit = rws.hitTestLegacy(ndcX, ndcY, this.camera);
+            if (hit) rws.drawRipple(hit.u, hit.v);
           }
         }
 
@@ -272,17 +316,32 @@ export class Game {
         }, CONFIG.tapFeedbackDuration);
       },
 
-      // --- DRAG: audio + condensation trail ---
       onDragStart: (x, y) => {
+        this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
         this.interactionAudio.startDrag(surface);
 
-        // Rain window: start condensation trail
-        if (isRainWindow && this.rainWindowScene) {
-          const { ndcX, ndcY } = this.screenToNDC(x, y);
-          const hit = this.rainWindowScene.hitTest(ndcX, ndcY, this.camera);
-          if (hit) {
-            this.rainWindowScene.drawTrail(hit.u, hit.v);
+        if (activeScene === 'cozy-room') {
+          const crs = this.sceneController.current() as CozyRoomScene | null;
+          crs?.setDragging(true);
+        }
+
+        if (activeScene === 'rain-window') {
+          const rws = this.sceneController.current() as RainWindowScene | null;
+          if (rws) {
+            const { ndcX, ndcY } = this.screenToNDC(x, y);
+            const hit = rws.hitTestLegacy(ndcX, ndcY, this.camera);
+            if (hit) rws.drawTrail(hit.u, hit.v);
+          }
+        }
+
+        if (activeScene === 'sand-table') {
+          const sts = this.sceneController.current() as SandTableScene | null;
+          if (sts) {
+            const { ndcX, ndcY } = this.screenToNDC(x, y);
+            const ndc = new THREE.Vector2(ndcX, ndcY);
+            const hit = sts.hitTest(ndc);
+            if (hit?.uv) sts.drawTrail(hit.uv.x, hit.uv.y);
           }
         }
 
@@ -290,16 +349,31 @@ export class Game {
       },
 
       onDragMove: (x, y, dx, dy) => {
-        // Normalize speed to 0-1 based on movement delta
+        // Throttled drag haptic pulse
+        if (Date.now() - this.lastDragHapticAt > 100) {
+          (this.hapticsSystem as any).lightFeedback?.();
+          this.lastDragHapticAt = Date.now();
+        }
+
         const speed = Math.sqrt(dx * dx + dy * dy) / CONFIG.interaction.dragSpeedNormalize;
         this.interactionAudio.updateDrag(speed);
 
-        // Rain window: extend condensation trail
-        if (isRainWindow && this.rainWindowScene) {
-          const { ndcX, ndcY } = this.screenToNDC(x, y);
-          const hit = this.rainWindowScene.hitTest(ndcX, ndcY, this.camera);
-          if (hit) {
-            this.rainWindowScene.drawTrail(hit.u, hit.v);
+        if (activeScene === 'rain-window') {
+          const rws = this.sceneController.current() as RainWindowScene | null;
+          if (rws) {
+            const { ndcX, ndcY } = this.screenToNDC(x, y);
+            const hit = rws.hitTestLegacy(ndcX, ndcY, this.camera);
+            if (hit) rws.drawTrail(hit.u, hit.v);
+          }
+        }
+
+        if (activeScene === 'sand-table') {
+          const sts = this.sceneController.current() as SandTableScene | null;
+          if (sts) {
+            const { ndcX, ndcY } = this.screenToNDC(x, y);
+            const ndc = new THREE.Vector2(ndcX, ndcY);
+            const hit = sts.hitTest(ndc);
+            if (hit?.uv) sts.drawTrail(hit.uv.x, hit.uv.y);
           }
         }
       },
@@ -307,16 +381,26 @@ export class Game {
       onDragEnd: () => {
         this.interactionAudio.stopDrag();
 
-        // Rain window: end trail line continuity
-        if (isRainWindow && this.rainWindowScene) {
-          this.rainWindowScene.endTrail();
+        if (activeScene === 'cozy-room') {
+          const crs = this.sceneController.current() as CozyRoomScene | null;
+          crs?.setDragging(false);
+        }
+
+        if (activeScene === 'rain-window') {
+          const rws = this.sceneController.current() as RainWindowScene | null;
+          rws?.endTrail();
+        }
+
+        if (activeScene === 'sand-table') {
+          const sts = this.sceneController.current() as SandTableScene | null;
+          sts?.endTrail();
         }
 
         this.store.update({ isInteracting: false, interactionType: 'none' });
       },
 
-      // --- HOLD: sustained layer fade-in → fade-out on release ---
       onHoldStart: (_x, _y) => {
+        this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
         this.interactionAudio.startHold(surface);
 
@@ -338,20 +422,14 @@ export class Game {
   // NAVIGATION
   // =============================================
 
-  private goHome(): void {
-    // Stop all audio layers
+  private async goHome(): Promise<void> {
     this.audioManager.stopAllAmbient();
     this.interactionAudio.unloadScene();
 
-    // Clear scene objects
-    if (this.rainWindowScene) {
-      this.rainWindowScene.dispose();
-      this.rainWindowScene = null;
-    }
-    if (this.currentSceneGroup) {
-      this.scene.remove(this.currentSceneGroup);
-      this.currentSceneGroup = null;
-    }
+    try { await this.wakeLock?.release?.(); } catch {}
+    this.wakeLock = null;
+
+    this.sceneController.disposeCurrent();
 
     this.store.update({ currentScreen: 'home' });
     this.playerHUD.hide();
@@ -360,7 +438,7 @@ export class Game {
 
   private toggleMute(): void {
     this.store.update({ muted: !this.store.state.muted });
-    this.playerHUD.show(); // Re-render to update icon
+    this.playerHUD.show();
   }
 
   private toggleDimScreen(): void {
@@ -371,14 +449,19 @@ export class Game {
   // ANIMATION LOOP
   // =============================================
 
-  private animate(): void {
-    requestAnimationFrame(() => this.animate());
+  private animate = (): void => {
+    if (this.paused) return;
+
+    requestAnimationFrame(this.animate);
+
+    const now = performance.now();
+    const targetMs = (now - this.lastInputTime < 600) ? 33 : 66;
+    if (now - this.lastRenderTime < targetMs) return;
+    this.lastRenderTime = now;
+
     const dt = this.clock.getDelta();
 
-    // Update rain window effects (rain overlay + condensation fade)
-    if (this.rainWindowScene) {
-      this.rainWindowScene.update(dt);
-    }
+    this.sceneController.update(dt);
 
     // Update gyro + auto-pan and apply to skybox rotation
     this.gyroLook.update(dt);
@@ -395,5 +478,5 @@ export class Game {
     }
 
     this.renderer.render(this.scene, this.camera);
-  }
+  };
 }

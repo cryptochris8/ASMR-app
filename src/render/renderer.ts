@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { CONFIG } from '../game/config';
 
-export function createRenderer(container: HTMLElement): THREE.WebGLRenderer {
+export function createRenderer(
+  container: HTMLElement,
+  camera?: THREE.PerspectiveCamera,
+): THREE.WebGLRenderer {
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: false,
@@ -17,7 +20,14 @@ export function createRenderer(container: HTMLElement): THREE.WebGLRenderer {
   container.appendChild(renderer.domElement);
 
   window.addEventListener('resize', () => {
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    if (camera) {
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
   });
 
   return renderer;

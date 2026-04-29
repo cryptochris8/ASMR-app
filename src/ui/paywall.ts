@@ -1,12 +1,13 @@
+import { UIPanel } from './UIPanel';
 import { Store } from '../game/state';
 import { CONFIG } from '../game/config';
 import { SubscriptionManager } from '../game/subscription';
 
-export class PaywallScreen {
-  private el: HTMLElement;
+export class PaywallScreen extends UIPanel {
   private store: Store;
   private subscriptionManager: SubscriptionManager;
   private onClose: () => void;
+  private escapeHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(
     container: HTMLElement,
@@ -14,15 +15,10 @@ export class PaywallScreen {
     subscriptionManager: SubscriptionManager,
     onClose: () => void,
   ) {
+    super(container, 'paywall-screen');
     this.store = store;
     this.subscriptionManager = subscriptionManager;
     this.onClose = onClose;
-
-    this.el = document.createElement('div');
-    this.el.className = 'paywall-screen';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
   }
 
@@ -32,17 +28,27 @@ export class PaywallScreen {
       paywallTriggerCount: this.store.state.paywallTriggerCount + 1,
     });
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.setAttribute('role', 'dialog');
+    this.element.setAttribute('aria-modal', 'true');
+    this.element.setAttribute('aria-labelledby', 'paywall-title');
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
+    this.escapeHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.hide();
+        this.onClose();
+      }
+    };
+    document.addEventListener('keydown', this.escapeHandler);
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.style.display = 'none';
-    }, 400);
+    this.element.style.opacity = '0';
+    setTimeout(() => { this.element.style.display = 'none'; }, 400);
+    if (this.escapeHandler) {
+      document.removeEventListener('keydown', this.escapeHandler);
+      this.escapeHandler = null;
+    }
   }
 
   shouldTrigger(): boolean {
@@ -53,8 +59,11 @@ export class PaywallScreen {
     return true;
   }
 
-  private render(): void {
-    this.el.innerHTML = `
+  protected render(): void {
+    // Trial wiring: integrates with RevenueCat introductory offer in Phase 5.
+    let trialEnabled = true;
+
+    this.element.innerHTML = `
       <div class="paywall-content">
         <div class="paywall-hero">
           <div class="paywall-glow"></div>
@@ -65,8 +74,13 @@ export class PaywallScreen {
           </svg>
         </div>
 
-        <h1 class="paywall-headline">Unlock the Full<br>Sleep Experience</h1>
+        <h1 class="paywall-headline" id="paywall-title">Unlock the Full<br>Sleep Experience</h1>
         <p class="paywall-subheadline">Premium scenes, better sleep tools, unlimited presets</p>
+
+        <div class="paywall-trial-row">
+          <span class="paywall-trial-label">Try free for 7 days</span>
+          <input type="checkbox" class="paywall-trial-toggle" checked aria-label="Enable 7-day free trial"/>
+        </div>
 
         <div class="paywall-benefits">
           <div class="paywall-benefit">All sound scenes & environments</div>
@@ -82,7 +96,7 @@ export class PaywallScreen {
             <span class="plan-price">$${CONFIG.monthlyPrice}/mo</span>
           </button>
           <button class="paywall-plan best-value" data-plan="yearly">
-            <span class="plan-badge">Best Value</span>
+            <span class="plan-badge plan-trial-badge">7-day free trial</span>
             <span class="plan-label">Yearly</span>
             <span class="plan-price">$${CONFIG.yearlyPrice}/yr</span>
             <span class="plan-savings">Save 50%</span>
@@ -99,21 +113,31 @@ export class PaywallScreen {
       </div>
     `;
 
-    // Bind events
     let selectedPlan: 'monthly' | 'yearly' = 'yearly';
 
-    this.el.querySelectorAll('.paywall-plan').forEach(btn => {
+    const trialToggle = this.element.querySelector('.paywall-trial-toggle') as HTMLInputElement;
+    const trialBadge = this.element.querySelector('.plan-trial-badge') as HTMLElement;
+
+    const updateTrialUI = () => {
+      trialEnabled = trialToggle.checked;
+      if (trialBadge) {
+        trialBadge.textContent = trialEnabled ? '7-day free trial' : 'Best Value';
+      }
+    };
+
+    trialToggle?.addEventListener('change', updateTrialUI);
+
+    this.element.querySelectorAll('.paywall-plan').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.el.querySelectorAll('.paywall-plan').forEach(b => b.classList.remove('selected'));
+        this.element.querySelectorAll('.paywall-plan').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         selectedPlan = btn.getAttribute('data-plan') as 'monthly' | 'yearly';
       });
     });
 
-    // Auto-select yearly
-    this.el.querySelector('.paywall-plan.best-value')?.classList.add('selected');
+    this.element.querySelector('.paywall-plan.best-value')?.classList.add('selected');
 
-    this.el.querySelector('.paywall-cta')?.addEventListener('click', async () => {
+    this.element.querySelector('.paywall-cta')?.addEventListener('click', async () => {
       if (selectedPlan === 'yearly') {
         await this.subscriptionManager.purchaseYearly();
       } else {
@@ -121,12 +145,12 @@ export class PaywallScreen {
       }
     });
 
-    this.el.querySelector('.paywall-skip')?.addEventListener('click', () => {
+    this.element.querySelector('.paywall-skip')?.addEventListener('click', () => {
       this.hide();
       this.onClose();
     });
 
-    this.el.querySelector('.paywall-restore')?.addEventListener('click', () => {
+    this.element.querySelector('.paywall-restore')?.addEventListener('click', () => {
       this.subscriptionManager.restorePurchases();
     });
   }
@@ -165,7 +189,41 @@ export class PaywallScreen {
       }
       .paywall-subheadline {
         font-size: 14px; color: ${CONFIG.colors.textMuted};
-        margin-bottom: 28px;
+        margin-bottom: 20px;
+      }
+      .paywall-trial-row {
+        display: flex; align-items: center; justify-content: center;
+        gap: 12px; margin-bottom: 24px;
+        padding: 12px 20px;
+        background: ${CONFIG.colors.timerActive}12;
+        border: 1px solid ${CONFIG.colors.timerActive}30;
+        border-radius: 12px;
+      }
+      .paywall-trial-label {
+        font-size: 15px; font-weight: 500;
+        color: ${CONFIG.colors.timerActive};
+      }
+      .paywall-trial-toggle {
+        width: 44px; height: 24px;
+        appearance: none; -webkit-appearance: none;
+        background: ${CONFIG.colors.surfaceLight};
+        border-radius: 12px; cursor: pointer;
+        position: relative; transition: background 0.2s;
+        flex-shrink: 0;
+      }
+      .paywall-trial-toggle::after {
+        content: ''; position: absolute;
+        width: 20px; height: 20px; border-radius: 10px;
+        background: ${CONFIG.colors.textMuted};
+        top: 2px; left: 2px;
+        transition: transform 0.2s;
+      }
+      .paywall-trial-toggle:checked {
+        background: ${CONFIG.colors.timerActive};
+      }
+      .paywall-trial-toggle:checked::after {
+        transform: translateX(20px);
+        background: #fff;
       }
       .paywall-benefits {
         text-align: left; margin-bottom: 28px;
@@ -195,12 +253,16 @@ export class PaywallScreen {
       .paywall-plan.selected {
         border-color: ${CONFIG.colors.premium};
       }
-      .paywall-plan.best-value .plan-badge {
+      .plan-badge {
         position: absolute; top: -10px;
         background: ${CONFIG.colors.premium};
         color: #000; font-size: 10px; font-weight: 600;
         padding: 3px 10px; border-radius: 8px;
         letter-spacing: 0.5px;
+      }
+      .plan-trial-badge {
+        background: ${CONFIG.colors.timerActive};
+        color: #fff;
       }
       .plan-label {
         font-size: 13px; color: ${CONFIG.colors.textMuted}; font-weight: 500;

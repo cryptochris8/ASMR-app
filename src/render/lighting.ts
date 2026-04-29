@@ -6,6 +6,8 @@ export interface SceneLights {
   directional: THREE.DirectionalLight;
 }
 
+let activeRaf: number | null = null;
+
 export function setupLighting(scene: THREE.Scene): SceneLights {
   const ambient = new THREE.AmbientLight(
     CONFIG.ambientLightColor,
@@ -35,6 +37,11 @@ export function updateSceneLighting(
   const targetAmbient = new THREE.Color(ambientColor);
   const targetDirectional = new THREE.Color(directionalColor);
 
+  if (activeRaf !== null) {
+    cancelAnimationFrame(activeRaf);
+    activeRaf = null;
+  }
+
   const startTime = performance.now();
 
   const animate = (now: number) => {
@@ -45,8 +52,12 @@ export function updateSceneLighting(
     lights.ambient.color.lerpColors(startAmbient, targetAmbient, eased);
     lights.directional.color.lerpColors(startDirectional, targetDirectional, eased);
 
-    if (t < 1) requestAnimationFrame(animate);
+    if (t < 1) {
+      activeRaf = requestAnimationFrame(animate);
+    } else {
+      activeRaf = null;
+    }
   };
 
-  requestAnimationFrame(animate);
+  activeRaf = requestAnimationFrame(animate);
 }

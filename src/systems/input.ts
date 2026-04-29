@@ -22,6 +22,12 @@ export class InputSystem {
   private isDragging: boolean = false;
   private totalMoved: number = 0;
 
+  private onPointerDownBound = (e: PointerEvent) => this.onPointerDown(e);
+  private onPointerMoveBound = (e: PointerEvent) => this.onPointerMove(e);
+  private onPointerUpBound = (e: PointerEvent) => this.onPointerUp(e);
+  private onPointerCancelBound = () => this.onPointerCancel();
+  private onContextMenuBound = (e: Event) => e.preventDefault();
+
   constructor(container: HTMLElement, callbacks: InputCallbacks) {
     this.container = container;
     this.callbacks = callbacks;
@@ -31,13 +37,28 @@ export class InputSystem {
   private bindEvents(): void {
     const el = this.container;
 
-    el.addEventListener('pointerdown', (e) => this.onPointerDown(e), { passive: false });
-    el.addEventListener('pointermove', (e) => this.onPointerMove(e), { passive: false });
-    el.addEventListener('pointerup', (e) => this.onPointerUp(e), { passive: false });
-    el.addEventListener('pointercancel', () => this.onPointerCancel(), { passive: false });
+    el.addEventListener('pointerdown', this.onPointerDownBound, { passive: false });
+    el.addEventListener('pointermove', this.onPointerMoveBound, { passive: false });
+    el.addEventListener('pointerup', this.onPointerUpBound, { passive: false });
+    el.addEventListener('pointercancel', this.onPointerCancelBound, { passive: false });
 
     // Prevent context menu on long press
-    el.addEventListener('contextmenu', (e) => e.preventDefault());
+    el.addEventListener('contextmenu', this.onContextMenuBound);
+  }
+
+  dispose(): void {
+    const el = this.container;
+
+    el.removeEventListener('pointerdown', this.onPointerDownBound);
+    el.removeEventListener('pointermove', this.onPointerMoveBound);
+    el.removeEventListener('pointerup', this.onPointerUpBound);
+    el.removeEventListener('pointercancel', this.onPointerCancelBound);
+    el.removeEventListener('contextmenu', this.onContextMenuBound);
+
+    if (this.holdTimer !== null) {
+      window.clearTimeout(this.holdTimer);
+      this.holdTimer = null;
+    }
   }
 
   private onPointerDown(e: PointerEvent): void {

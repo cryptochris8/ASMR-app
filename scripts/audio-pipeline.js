@@ -30,9 +30,13 @@ const __dirname = path.dirname(__filename);
 // Configuration
 // ---------------------------------------------------------------------------
 
-/** Absolute path to ffmpeg/ffprobe executables */
-const FFMPEG = String.raw`C:\Users\chris\AppData\Local\Microsoft\WinGet\Links\ffmpeg.exe`;
-const FFPROBE = String.raw`C:\Users\chris\AppData\Local\Microsoft\WinGet\Links\ffprobe.exe`;
+/** Absolute path to ffmpeg/ffprobe executables.
+ *  Override via environment variables so CI and other developers can use
+ *  their system-installed ffmpeg without editing this file.
+ *    FFMPEG_PATH=/usr/bin/ffmpeg  FFPROBE_PATH=/usr/bin/ffprobe
+ */
+const FFMPEG = process.env.FFMPEG_PATH || "ffmpeg";
+const FFPROBE = process.env.FFPROBE_PATH || "ffprobe";
 
 /** Root audio directory to scan */
 const AUDIO_ROOT = path.resolve(__dirname, "..", "public", "audio");

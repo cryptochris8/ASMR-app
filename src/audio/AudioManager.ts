@@ -22,6 +22,7 @@ export class AudioManager {
   private buffers: Map<string, AudioBuffer> = new Map();
   private activeSources: Map<string, ActiveSource> = new Map();
   private unlocked: boolean = false;
+  private activeInteractionCount: number = 0;
 
   constructor(store: Store) {
     this.store = store;
@@ -32,10 +33,11 @@ export class AudioManager {
     });
   }
 
-  unlock(): void {
+  async unlock(): Promise<void> {
     if (this.unlocked) return;
 
     this.ctx = new AudioContext();
+    if (this.ctx.state === 'suspended') await this.ctx.resume();
     this.masterGain = this.ctx.createGain();
     this.masterGain.connect(this.ctx.destination);
 
@@ -138,9 +140,7 @@ export class AudioManager {
     const buffer = this.buffers.get(id);
     if (!buffer) return;
 
-    // Limit simultaneous sounds
-    const activeCount = this.activeSources.size;
-    if (activeCount >= CONFIG.maxSimultaneousSounds) return;
+    if (this.activeInteractionCount >= CONFIG.maxSimultaneousSounds) return;
 
     const source = this.ctx.createBufferSource();
     source.buffer = buffer;
@@ -158,9 +158,13 @@ export class AudioManager {
 
     const instanceId = `${id}_${Date.now()}`;
     this.activeSources.set(instanceId, { source, gainNode, id: instanceId, loop: false });
+    this.activeInteractionCount++;
 
     source.onended = () => {
       this.activeSources.delete(instanceId);
+      this.activeInteractionCount = Math.max(0, this.activeInteractionCount - 1);
+      try { source.disconnect(); } catch {}
+      try { gainNode.disconnect(); } catch {}
     };
   }
 
@@ -182,11 +186,34 @@ export class AudioManager {
     return this.masterGain?.gain.value ?? 0;
   }
 
+  async resumeContext(): Promise<void> {
+    if (this.ctx && this.ctx.state === 'suspended') {
+      try { await this.ctx.resume(); } catch {}
+    }
+  }
+
   stopAll(): void {
-    for (const [id, active] of this.activeSources) {
+    for (const [, active] of this.activeSources) {
       try { active.source.stop(); } catch {}
+      try { active.source.disconnect(); } catch {}
+      try { active.gainNode.disconnect(); } catch {}
     }
     this.activeSources.clear();
+    this.activeInteractionCount = 0;
+  }
+
+  async dispose(): Promise<void> {
+    this.stopAll();
+    try { this.masterGain?.disconnect(); } catch {}
+    try { this.ambientGain?.disconnect(); } catch {}
+    try { this.interactionGain?.disconnect(); } catch {}
+    await this.ctx?.close?.();
+    this.ctx = null;
+    this.masterGain = null;
+    this.ambientGain = null;
+    this.interactionGain = null;
+    this.buffers.clear();
+    this.unlocked = false;
   }
 
   getActiveSourceCount(): number {

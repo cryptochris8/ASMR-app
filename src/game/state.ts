@@ -44,7 +44,7 @@ export interface AppState {
 
   // Subscription
   subscriptionTier: SubscriptionTier;
-  subscriptionExpiresAt: number;
+  subscriptionExpiresAt: number | null;
 
   // Preferences
   hapticsEnabled: boolean;
@@ -65,6 +65,12 @@ export interface AppState {
   // Paywall
   paywallShown: boolean;
   paywallTriggerCount: number;
+
+  // Sleep mode (transient; one-shot trigger consumed by Game)
+  sleepModeRequested: boolean;
+
+  // Warm-amber night-overlay preference
+  warmScreenTintEnabled: boolean;
 }
 
 export function createInitialState(): AppState {
@@ -106,6 +112,9 @@ export function createInitialState(): AppState {
 
     paywallShown: false,
     paywallTriggerCount: 0,
+
+    sleepModeRequested: false,
+    warmScreenTintEnabled: false,
   };
 }
 
@@ -114,15 +123,19 @@ type Listener = () => void;
 export class Store {
   state: AppState;
   private listeners: Set<Listener> = new Set();
-  private isNotifying: boolean = false;
+  private isNotifying = false;
+  private pendingNotify = false;
 
   constructor(initial: AppState) {
     this.state = initial;
   }
 
-  update(partial: Partial<AppState>) {
-    Object.assign(this.state, partial);
-    if (this.isNotifying) return;
+  update(partial: Partial<AppState>): void {
+    this.state = { ...this.state, ...partial };
+    if (this.isNotifying) {
+      this.pendingNotify = true;
+      return;
+    }
     this.notify();
   }
 
@@ -131,9 +144,15 @@ export class Store {
     return () => this.listeners.delete(fn);
   }
 
-  private notify() {
+  private notify(): void {
     this.isNotifying = true;
-    this.listeners.forEach(fn => fn());
-    this.isNotifying = false;
+    try {
+      do {
+        this.pendingNotify = false;
+        for (const listener of this.listeners) listener();
+      } while (this.pendingNotify);
+    } finally {
+      this.isNotifying = false;
+    }
   }
 }

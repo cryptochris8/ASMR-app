@@ -16,18 +16,8 @@
  *   claude-processed  - exists on disk but requires processing (resample to 48 kHz 16-bit, trim, normalize)
  */
 
-export interface AssetStatus {
-  id: string;
-  file: string;           // path relative to public/audio/
-  scene: string;          // which scene uses this (or 'all' for cross-scene packs)
-  system: 'interaction' | 'mixer';
-  category: string;       // ambience, tap, drag, hold, one-shot, mixer-layer
-  provider: 'user-manual' | 'claude-generated' | 'claude-processed';
-  status: 'present' | 'missing' | 'needs-processing';
-  isPremium: boolean;
-  isHeroAsset: boolean;
-  notes: string;
-}
+import type { AssetStatus } from './types';
+export type { AssetStatus } from './types';
 
 export const ASSET_MANIFEST: AssetStatus[] = [
 
@@ -993,4 +983,14 @@ export function getManifestSummary() {
     byScene,
     bySystem,
   };
+}
+
+export function validateManifest(manifest: AssetStatus[]): { ok: boolean; errors: string[] } {
+  const errors: string[] = [];
+  for (const a of manifest) {
+    if (!a.id) errors.push('asset missing id');
+    if (!a.file) errors.push(`asset ${a.id ?? '?'} missing file`);
+    if (a.scene && typeof a.scene !== 'string') errors.push(`asset ${a.id} scene must be string`);
+  }
+  return { ok: errors.length === 0, errors };
 }

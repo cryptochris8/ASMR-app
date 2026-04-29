@@ -17,6 +17,7 @@ export class GyroLookSystem {
   private listening = false;
   private initialAlpha: number | null = null;
   private initialBeta: number | null = null;
+  private firstEvent = true;
 
   // How far the user can look by tilting (~17° yaw, ~8° pitch)
   private readonly maxYaw = 0.3;
@@ -40,9 +41,14 @@ export class GyroLookSystem {
       try {
         const result = await DOE.requestPermission();
         if (result !== 'granted') return;
+        // Permission granted — recalibrate now, before first event
+        this.recalibrate();
       } catch {
         return;
       }
+    } else {
+      // Non-iOS: recalibrate on first orientation event instead of here
+      this.firstEvent = true;
     }
 
     this.listening = true;
@@ -52,6 +58,12 @@ export class GyroLookSystem {
   private onOrientation = (e: DeviceOrientationEvent): void => {
     if (e.alpha === null || e.beta === null) return;
 
+    // Non-iOS: calibrate on the very first event
+    if (this.firstEvent) {
+      this.firstEvent = false;
+      this.recalibrate();
+    }
+
     this.hasGyro = true;
 
     // First reading becomes baseline
@@ -60,17 +72,32 @@ export class GyroLookSystem {
       this.initialBeta = e.beta;
     }
 
-    // Delta from baseline
-    let dAlpha = e.alpha - this.initialAlpha;
-    const dBeta = (e.beta ?? 0) - (this.initialBeta ?? 0);
+    // Determine landscape compensation by reading screen orientation angle
+    const orientAngle = (screen.orientation as any)?.angle ?? 0;
+    const isLandscape = orientAngle === 90 || orientAngle === -90;
 
-    // Wrap around ±180°
-    if (dAlpha > 180) dAlpha -= 360;
-    if (dAlpha < -180) dAlpha += 360;
+    let rawYaw: number;
+    let rawPitch: number;
 
-    // Convert to radians and clamp
-    this.gyroYaw = Math.max(-this.maxYaw, Math.min(this.maxYaw, (dAlpha * Math.PI) / 180));
-    this.gyroPitch = Math.max(-this.maxPitch, Math.min(this.maxPitch, (dBeta * Math.PI) / 180));
+    if (isLandscape) {
+      // In landscape, beta/gamma roles are swapped
+      let dGamma = (e.gamma ?? 0) - (this.initialBeta ?? 0);
+      let dAlpha = e.alpha - this.initialAlpha!;
+      if (dAlpha > 180) dAlpha -= 360;
+      if (dAlpha < -180) dAlpha += 360;
+      rawYaw = (dAlpha * Math.PI) / 180;
+      rawPitch = (dGamma * Math.PI) / 180;
+    } else {
+      let dAlpha = e.alpha - this.initialAlpha!;
+      const dBeta = (e.beta ?? 0) - (this.initialBeta ?? 0);
+      if (dAlpha > 180) dAlpha -= 360;
+      if (dAlpha < -180) dAlpha += 360;
+      rawYaw = (dAlpha * Math.PI) / 180;
+      rawPitch = (dBeta * Math.PI) / 180;
+    }
+
+    this.gyroYaw = Math.max(-this.maxYaw, Math.min(this.maxYaw, rawYaw));
+    this.gyroPitch = Math.max(-this.maxPitch, Math.min(this.maxPitch, rawPitch));
   };
 
   /** Call every frame with delta time */

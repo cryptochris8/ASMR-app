@@ -1,51 +1,55 @@
+import { UIPanel } from './UIPanel';
 import { Store } from '../game/state';
 import { CONFIG } from '../game/config';
 import { SleepTimer } from '../systems/SleepTimer';
 
-export class TimerModal {
-  private el: HTMLElement;
+export class TimerModal extends UIPanel {
   private store: Store;
   private timer: SleepTimer;
+  private escapeHandler: ((e: KeyboardEvent) => void) | null = null;
 
   constructor(container: HTMLElement, store: Store, timer: SleepTimer) {
+    super(container, 'timer-modal');
     this.store = store;
     this.timer = timer;
-
-    this.el = document.createElement('div');
-    this.el.className = 'timer-modal';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
   }
 
   show(): void {
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
+    this.escapeHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') this.hide();
+    };
+    document.addEventListener('keydown', this.escapeHandler);
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.style.display = 'none';
-    }, 300);
+    this.element.style.opacity = '0';
+    setTimeout(() => { this.element.style.display = 'none'; }, 300);
+    if (this.escapeHandler) {
+      document.removeEventListener('keydown', this.escapeHandler);
+      this.escapeHandler = null;
+    }
   }
 
-  private render(): void {
+  protected render(): void {
     const { timerActive, timerFadeAudio, timerDimScreen, lastUsedTimerMs } = this.store.state;
 
-    this.el.innerHTML = `
+    this.element.setAttribute('role', 'dialog');
+    this.element.setAttribute('aria-modal', 'true');
+    this.element.setAttribute('aria-labelledby', 'timer-title');
+
+    this.element.innerHTML = `
       <div class="timer-backdrop"></div>
       <div class="timer-sheet">
         <div class="timer-handle"></div>
-        <h2 class="timer-title">Sleep Timer</h2>
+        <h2 class="timer-title" id="timer-title">Sleep Timer</h2>
 
         ${timerActive ? `
           <div class="timer-active-display">
-            <span class="timer-remaining">${this.timer.getRemainingFormatted()}</span>
+            <span class="timer-remaining" aria-live="polite">${this.timer.getRemainingFormatted()}</span>
             <button class="timer-cancel-btn">Cancel Timer</button>
           </div>
         ` : `
@@ -75,11 +79,31 @@ export class TimerModal {
       </div>
     `;
 
-    // Bind events
-    this.el.querySelector('.timer-backdrop')?.addEventListener('click', () => this.hide());
-    this.el.querySelector('.timer-close-btn')?.addEventListener('click', () => this.hide());
+    this.element.querySelector('.timer-backdrop')?.addEventListener('click', () => this.hide());
+    this.element.querySelector('.timer-close-btn')?.addEventListener('click', () => this.hide());
 
-    this.el.querySelectorAll('.timer-option').forEach(btn => {
+    const sheet = this.element.querySelector('.timer-sheet') as HTMLElement;
+    let startY = 0;
+    sheet.addEventListener('touchstart', (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    sheet.addEventListener('touchmove', (e: TouchEvent) => {
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) sheet.style.transform = `translateY(${dy}px)`;
+    }, { passive: true });
+    sheet.addEventListener('touchend', (e: TouchEvent) => {
+      const dy = e.changedTouches[0].clientY - startY;
+      if (dy > 80) {
+        sheet.style.transform = '';
+        this.hide();
+      } else {
+        sheet.style.transition = 'transform 0.2s ease';
+        sheet.style.transform = 'translateY(0)';
+        setTimeout(() => { sheet.style.transition = ''; }, 200);
+      }
+    });
+
+    this.element.querySelectorAll('.timer-option').forEach(btn => {
       btn.addEventListener('click', () => {
         const ms = parseInt(btn.getAttribute('data-ms') ?? '0', 10);
         if (ms > 0) {
@@ -91,12 +115,12 @@ export class TimerModal {
       });
     });
 
-    this.el.querySelector('.timer-cancel-btn')?.addEventListener('click', () => {
+    this.element.querySelector('.timer-cancel-btn')?.addEventListener('click', () => {
       this.timer.stop();
       this.render();
     });
 
-    this.el.querySelectorAll('input[data-toggle]').forEach(input => {
+    this.element.querySelectorAll('input[data-toggle]').forEach(input => {
       input.addEventListener('change', (e) => {
         const toggle = (input as HTMLInputElement).getAttribute('data-toggle');
         const checked = (e.target as HTMLInputElement).checked;

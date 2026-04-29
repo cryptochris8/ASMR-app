@@ -1,9 +1,9 @@
+import { UIPanel } from './UIPanel';
 import { Store } from '../game/state';
 import { CONFIG } from '../game/config';
 import { getScene } from '../content/scenes';
 
-export class PlayerHUD {
-  private el: HTMLElement;
+export class PlayerHUD extends UIPanel {
   private store: Store;
   private onTimerOpen: () => void;
   private onMixerOpen: () => void;
@@ -24,67 +24,67 @@ export class PlayerHUD {
       onDimScreen: () => void;
     },
   ) {
+    super(container, 'player-hud');
     this.store = store;
     this.onTimerOpen = callbacks.onTimerOpen;
     this.onMixerOpen = callbacks.onMixerOpen;
     this.onBack = callbacks.onBack;
     this.onToggleMute = callbacks.onToggleMute;
     this.onDimScreen = callbacks.onDimScreen;
-
-    this.el = document.createElement('div');
-    this.el.className = 'player-hud';
-    this.el.style.display = 'none';
-    container.appendChild(this.el);
-
     this.applyStyles();
     this.startAutoHide();
   }
 
   show(): void {
     this.render();
-    this.el.style.display = 'flex';
-    requestAnimationFrame(() => {
-      this.el.style.opacity = '1';
-    });
+    this.element.style.display = 'flex';
+    requestAnimationFrame(() => { this.element.style.opacity = '1'; });
     this.resetAutoHide();
   }
 
   hide(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.style.display = 'none';
-    }, CONFIG.uiFadeOutDuration);
+    this.element.style.opacity = '0';
+    setTimeout(() => { this.element.style.display = 'none'; }, CONFIG.uiFadeOutDuration);
   }
 
   bringUpUI(): void {
     if (!this.visible) {
       this.visible = true;
-      this.el.style.opacity = '1';
-      this.el.style.pointerEvents = 'auto';
+      this.element.style.opacity = '1';
+      this.element.style.pointerEvents = 'auto';
     }
     this.resetAutoHide();
   }
 
   updateTimerDisplay(): void {
-    const timerBadge = this.el.querySelector('.player-timer-badge') as HTMLElement;
-    if (!timerBadge) return;
+    const timerBadge = this.element.querySelector('.player-timer-badge') as HTMLElement;
+    const persistentBadge = this.element.querySelector('.player-persistent-timer') as HTMLElement;
 
     if (this.store.state.timerActive) {
       const ms = this.store.state.timerRemainingMs;
       const minutes = Math.floor(ms / 60000);
       const seconds = Math.floor((ms % 60000) / 1000);
-      timerBadge.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-      timerBadge.style.display = 'block';
+      const formatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+      if (timerBadge) {
+        timerBadge.textContent = formatted;
+        timerBadge.style.display = 'block';
+      }
+      if (persistentBadge) {
+        persistentBadge.textContent = formatted;
+        persistentBadge.style.display = 'block';
+      }
     } else {
-      timerBadge.style.display = 'none';
+      if (timerBadge) timerBadge.style.display = 'none';
+      if (persistentBadge) persistentBadge.style.display = 'none';
     }
   }
 
-  private render(): void {
+  protected render(): void {
     const scene = getScene(this.store.state.activeScene);
     const { muted, timerActive } = this.store.state;
 
-    this.el.innerHTML = `
+    this.element.innerHTML = `
       <div class="player-top-bar">
         <button class="player-btn player-back-btn" aria-label="Back">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${CONFIG.colors.text}" stroke-width="1.5">
@@ -94,6 +94,8 @@ export class PlayerHUD {
         <div class="player-scene-label">${scene?.name ?? ''}</div>
         <div class="player-timer-badge" style="display: ${timerActive ? 'block' : 'none'}"></div>
       </div>
+
+      <div class="player-persistent-timer" style="display: ${timerActive ? 'block' : 'none'}"></div>
 
       <div class="player-bottom-bar">
         <button class="player-btn" data-action="timer" aria-label="Sleep Timer">
@@ -132,10 +134,9 @@ export class PlayerHUD {
       </div>
     `;
 
-    // Bind events
-    this.el.querySelector('.player-back-btn')?.addEventListener('click', () => this.onBack());
+    this.element.querySelector('.player-back-btn')?.addEventListener('click', () => this.onBack());
 
-    this.el.querySelectorAll('.player-btn[data-action]').forEach(btn => {
+    this.element.querySelectorAll('.player-btn[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const action = btn.getAttribute('data-action');
         if (action === 'timer') this.onTimerOpen();
@@ -146,12 +147,15 @@ export class PlayerHUD {
       });
     });
 
-    // Tap anywhere on the HUD area to reset auto-hide
-    this.el.addEventListener('pointerdown', () => this.resetAutoHide());
+    this.element.addEventListener('pointerdown', () => this.resetAutoHide());
+
+    if (this.store.state.timerActive) {
+      this.updateTimerDisplay();
+    }
   }
 
   private startAutoHide(): void {
-    // Will auto-hide after delay
+    // Intentionally empty — auto-hide starts on first show via resetAutoHide
   }
 
   private resetAutoHide(): void {
@@ -160,8 +164,13 @@ export class PlayerHUD {
     }
     this.autoHideTimer = window.setTimeout(() => {
       this.visible = false;
-      this.el.style.opacity = '0.15';
-      this.el.style.pointerEvents = 'none';
+      this.element.style.opacity = '0.15';
+      this.element.style.pointerEvents = 'none';
+      // Keep persistent timer visible even when HUD is dimmed
+      const persistentBadge = this.element.querySelector('.player-persistent-timer') as HTMLElement;
+      if (persistentBadge && this.store.state.timerActive) {
+        persistentBadge.style.opacity = '1';
+      }
     }, CONFIG.uiAutoHideDelay);
   }
 
@@ -195,6 +204,19 @@ export class PlayerHUD {
         background: ${CONFIG.colors.timerActive}18;
         padding: 4px 12px; border-radius: 12px;
       }
+      .player-persistent-timer {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 0px) + 8px);
+        right: 20px;
+        font-size: 13px; font-weight: 500;
+        color: ${CONFIG.colors.timerActive};
+        background: ${CONFIG.colors.timerActive}18;
+        padding: 4px 12px; border-radius: 12px;
+        pointer-events: none;
+        z-index: 4001;
+        opacity: 1;
+        transition: none;
+      }
       .player-bottom-bar {
         display: flex; align-items: center; justify-content: space-around;
         padding: 16px 20px;
@@ -207,6 +229,7 @@ export class PlayerHUD {
         display: flex; flex-direction: column; align-items: center; gap: 4px;
         padding: 8px 12px; border-radius: 12px;
         transition: background 0.2s;
+        min-height: 44px; min-width: 44px;
       }
       .player-btn:active { background: ${CONFIG.colors.surfaceLight}40; }
       .player-btn-label {

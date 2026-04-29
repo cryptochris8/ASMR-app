@@ -1,5 +1,20 @@
 import { SceneId } from '../game/state';
 
+/** Canonical asset manifest entry. schema_version defaults to 1 at validate-time. */
+export interface AssetStatus {
+  id: string;
+  file: string;           // path relative to public/audio/
+  scene: string;          // which scene uses this (or 'all' for cross-scene packs)
+  system: 'interaction' | 'mixer';
+  category: string;       // ambience, tap, drag, hold, one-shot, mixer-layer
+  provider: 'user-manual' | 'claude-generated' | 'claude-processed';
+  status: 'present' | 'missing' | 'needs-processing';
+  isPremium: boolean;
+  isHeroAsset: boolean;
+  notes: string;
+  schema_version?: number;
+}
+
 /** Surface types that define the emotional character of interactions */
 export type SurfaceType = 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic';
 
@@ -101,14 +116,3 @@ export interface InteractionAudioConfig {
   maxSimultaneousSounds: number;
 }
 
-/** Asset manifest entry for tracking production status of all audio files */
-export interface AssetManifestEntry {
-  id: string;
-  file: string;
-  sceneId: string;
-  category: 'ambience' | 'tap' | 'drag' | 'hold' | 'one-shot' | 'mixer';
-  source: 'manual' | 'generated' | 'placeholder';
-  status: 'present' | 'missing' | 'needs-processing';
-  isPremium: boolean;
-  notes?: string;
-}

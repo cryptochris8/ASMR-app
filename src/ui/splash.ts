@@ -1,15 +1,18 @@
+import { UIPanel } from './UIPanel';
 import { CONFIG } from '../game/config';
 
-export class SplashScreen {
-  private el: HTMLElement;
+export class SplashScreen extends UIPanel {
   private onComplete: () => void;
 
   constructor(container: HTMLElement, onComplete: () => void) {
+    super(container, 'splash-screen');
     this.onComplete = onComplete;
+    this.applyStyles();
+    this.startSplash();
+  }
 
-    this.el = document.createElement('div');
-    this.el.className = 'splash-screen';
-    this.el.innerHTML = `
+  protected render(): void {
+    this.element.innerHTML = `
       <div class="splash-content">
         <div class="splash-logo">
           <div class="splash-icon">
@@ -27,11 +30,21 @@ export class SplashScreen {
         </div>
       </div>
     `;
+  }
 
-    this.applyStyles();
-    container.appendChild(this.el);
-
+  private startSplash(): void {
+    this.render();
+    this.element.style.display = '';
+    this.element.style.opacity = '1';
     setTimeout(() => this.fadeOut(), CONFIG.splashDuration);
+  }
+
+  private fadeOut(): void {
+    this.element.style.opacity = '0';
+    setTimeout(() => {
+      this.element.remove();
+      this.onComplete();
+    }, 600);
   }
 
   private applyStyles(): void {
@@ -89,13 +102,5 @@ export class SplashScreen {
       }
     `;
     document.head.appendChild(style);
-  }
-
-  private fadeOut(): void {
-    this.el.style.opacity = '0';
-    setTimeout(() => {
-      this.el.remove();
-      this.onComplete();
-    }, 600);
   }
 }
