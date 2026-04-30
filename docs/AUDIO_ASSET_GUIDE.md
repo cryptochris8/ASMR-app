@@ -112,3 +112,62 @@ tier: 'premium'   // Gated behind IAP; paywall shown via src/ui/paywall.ts
 ```
 
 `AudioManager` and `InteractionAudioManager` do not enforce gating themselves — gating is applied at the UI layer before a scene is loaded. Do not store premium audio paths in free scene registrations.
+
+---
+
+## ElevenLabs SFX Generator
+
+For rapid prototyping or filling out empty packs, the project ships a build-time
+script that calls the [ElevenLabs Sound Effects API](https://elevenlabs.io/docs/api-reference/sound-effects)
+and writes WAVs into the exact paths `src/audio/sceneAudioRegistry.ts` expects.
+
+### Setup
+
+1. Get an API key from your ElevenLabs dashboard → Profile → API Keys.
+2. Copy `.env.example` to `.env.local` (the `.local` variant is git-ignored).
+3. Set `ELEVENLABS_API_KEY=sk_...` in `.env.local`.
+4. Make sure `ffmpeg` is on your PATH or set `FFMPEG_PATH` in `.env.local`. The
+   script transcodes the API's MP3 response to 48 kHz / 16-bit stereo WAV.
+
+### Usage
+
+```bash
+# Generate every missing asset listed in scripts/audio-spec.json
+npm run gen:audio
+
+# Only one pack
+npm run gen:audio -- --pack cozy-room
+
+# Only one asset (handy for re-rolling a single take)
+npm run gen:audio -- --id wood_tap_01 --force
+
+# Print what would be generated without spending credits
+npm run gen:audio -- --dry-run
+```
+
+The script is idempotent — assets that already exist on disk are skipped unless
+`--force` is passed. Concurrency is capped at 3 parallel requests.
+
+### Editing the spec
+
+`scripts/audio-spec.json` is the source of truth. Each entry has:
+
+| Field               | Required | Notes                                               |
+| ------------------- | -------- | --------------------------------------------------- |
+| `id`                | yes      | Matches the `id` in `sceneAudioRegistry.ts`         |
+| `pack`              | yes      | Used by `--pack` filter; matches the `sceneId`      |
+| `file`              | yes      | Output path **relative to `public/audio/`**         |
+| `prompt`            | yes      | Sent verbatim as the SFX text prompt                |
+| `duration_seconds`  | no       | 0.5–22; defaults to `defaults.duration_seconds`     |
+| `prompt_influence`  | no       | 0–1; higher = closer to prompt, lower = more variety|
+
+### Cost & quality caveats
+
+- Roughly **$0.05–0.10 per generation**. The default spec has ~32 entries.
+- Loop assets (drag/hold/ambience) come back as one-shots — they're not
+  intrinsically seamless. Plan to either re-roll until a take loops cleanly or
+  hand-edit the WAV (zero-crossings + crossfade) before shipping.
+- The endpoint is non-deterministic. Same prompt, different output every time.
+  If you like a specific take, commit it; don't re-roll on every CI run.
+- Generated audio is committed to the repo. Keep prompts plain (no copyrighted
+  references) and audition every asset before merging.

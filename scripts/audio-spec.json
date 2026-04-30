@@ -1,0 +1,281 @@
+{
+  "version": 1,
+  "model": "eleven_text_to_sound_v2",
+  "defaults": {
+    "duration_seconds": 3,
+    "prompt_influence": 0.5,
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 16,
+    "channels": 2
+  },
+  "assets": [
+    {
+      "id": "tap_glass_03",
+      "pack": "rain-window",
+      "file": "packs/rain/tap-glass-03.wav",
+      "prompt": "single soft fingertip tap on a thin glass window, short percussive click, close-mic ASMR, no music, no reverb",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tap_glass_04",
+      "pack": "rain-window",
+      "file": "packs/rain/tap-glass-04.wav",
+      "prompt": "delicate single tap on glass with subtle ring, short, intimate close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tap_glass_05",
+      "pack": "rain-window",
+      "file": "packs/rain/tap-glass-05.wav",
+      "prompt": "soft fingernail tick on cold glass, very short, dry, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "fireplace_room_loop_01",
+      "pack": "cozy-room",
+      "file": "ambient/fireplace-room-loop-01.wav",
+      "prompt": "warm wood-burning fireplace ambience, gentle continuous crackle and pop, distant low room tone, calm cozy living room at night, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "wood_tap_01",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-01.wav",
+      "prompt": "single soft fingertip tap on a hollow wooden mantle, short warm thock, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_tap_02",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-02.wav",
+      "prompt": "soft knuckle tap on solid oak, low warm thump, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_tap_03",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-03.wav",
+      "prompt": "fingertip pat on aged wood, hollow tap with brief sustain, close-mic ASMR, no music",
+      "duration_seconds": 0.9,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_tap_04",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-04.wav",
+      "prompt": "gentle tap on wooden bookshelf, dry warm tick, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_tap_05",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-05.wav",
+      "prompt": "soft tap on a wooden picture frame, brief mid thump, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_tap_06",
+      "pack": "cozy-room",
+      "file": "interactions/tap/wood/wood-tap-06.wav",
+      "prompt": "short fingertip tap on a wooden cabinet door, hollow warm thock, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+
+    {
+      "id": "ceramic_click_01",
+      "pack": "cozy-room",
+      "file": "interactions/tap/ceramic/ceramic-click-01.wav",
+      "prompt": "soft fingernail click on a ceramic mug, short bright tink, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "ceramic_click_02",
+      "pack": "cozy-room",
+      "file": "interactions/tap/ceramic/ceramic-click-02.wav",
+      "prompt": "gentle ceramic plate tap, brief mid-bright click, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "ceramic_click_03",
+      "pack": "cozy-room",
+      "file": "interactions/tap/ceramic/ceramic-click-03.wav",
+      "prompt": "soft tap on the rim of a coffee mug with subtle ring, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "ceramic_click_04",
+      "pack": "cozy-room",
+      "file": "interactions/tap/ceramic/ceramic-click-04.wav",
+      "prompt": "short fingertip tick on glazed ceramic, dry bright click, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "fabric_brush_loop_01",
+      "pack": "cozy-room",
+      "file": "interactions/drag/fabric/fabric-brush-loop-01.wav",
+      "prompt": "soft continuous fingertip brushing across woven cotton fabric, slow steady movement, intimate close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+    {
+      "id": "blanket_drag_loop_01",
+      "pack": "cozy-room",
+      "file": "interactions/drag/fabric/blanket-drag-loop-01.wav",
+      "prompt": "slow continuous wool blanket sliding across itself, gentle muffled friction, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "warm_tone_hold_01",
+      "pack": "cozy-room",
+      "file": "interactions/hold/warm-tone-hold-01.wav",
+      "prompt": "sustained warm low ambient drone, slow soft swell, soothing pad with no melody, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "fireplace_pop_01",
+      "pack": "cozy-room",
+      "file": "one_shots/fireplace/fireplace-pop-01.wav",
+      "prompt": "single dry fireplace pop and crackle, sharp short woody snap, close-mic ASMR, no music",
+      "duration_seconds": 1.2,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "chair_creak_01",
+      "pack": "cozy-room",
+      "file": "one_shots/fireplace/chair-creak-01.wav",
+      "prompt": "subtle wooden chair creak, short soft groan of old wood, close-mic ASMR, no music",
+      "duration_seconds": 1.5,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "room_settle_01",
+      "pack": "cozy-room",
+      "file": "one_shots/fireplace/room-settle-01.wav",
+      "prompt": "distant house settling, subtle creak from wooden beams, very quiet, close-mic ASMR, no music",
+      "duration_seconds": 2,
+      "prompt_influence": 0.7
+    },
+
+    {
+      "id": "sand_room_loop_01",
+      "pack": "sand-table",
+      "file": "ambient/sand-room-loop-01.wav",
+      "prompt": "very quiet warm desert room ambience, faint distant wind through a window, soft sustained air tone, calm and meditative, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "tray_tap_01",
+      "pack": "sand-table",
+      "file": "interactions/tap/sand/tray-tap-01.wav",
+      "prompt": "soft fingertip tap on the edge of a wooden sand tray, short warm thock, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tray_tap_02",
+      "pack": "sand-table",
+      "file": "interactions/tap/sand/tray-tap-02.wav",
+      "prompt": "gentle tap on a teak wooden tray, dry hollow tick, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tray_tap_03",
+      "pack": "sand-table",
+      "file": "interactions/tap/sand/tray-tap-03.wav",
+      "prompt": "fingertip pat on bamboo edge of a sand tray, short soft thock, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tray_tap_04",
+      "pack": "sand-table",
+      "file": "interactions/tap/sand/tray-tap-04.wav",
+      "prompt": "soft single tap on a low wooden table, brief warm thump, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tray_tap_05",
+      "pack": "sand-table",
+      "file": "interactions/tap/sand/tray-tap-05.wav",
+      "prompt": "fingernail tick on a wooden bowl rim, very short bright click, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "sand_drag_loop_01",
+      "pack": "sand-table",
+      "file": "interactions/drag/sand/sand-drag-loop-01.wav",
+      "prompt": "fingertip dragging slowly through fine dry sand, soft continuous granular shush, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+    {
+      "id": "sand_drag_loop_02",
+      "pack": "sand-table",
+      "file": "interactions/drag/sand/sand-drag-loop-02.wav",
+      "prompt": "palm sliding across sand in a wooden tray, slow soft hiss with subtle grit, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+    {
+      "id": "grain_shift_loop_01",
+      "pack": "sand-table",
+      "file": "interactions/drag/sand/grain-shift-loop-01.wav",
+      "prompt": "fine sand grains cascading and shifting against each other, gentle continuous granular trickle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+
+    {
+      "id": "texture_pressure_01",
+      "pack": "sand-table",
+      "file": "interactions/hold/texture-pressure-01.wav",
+      "prompt": "sustained low warm desert pad with subtle granular texture, soothing slow drone, no melody, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "grain_slide_01",
+      "pack": "sand-table",
+      "file": "one_shots/sand/grain-slide-01.wav",
+      "prompt": "small handful of dry sand falling against more sand, brief soft cascade, close-mic ASMR, no music",
+      "duration_seconds": 1.5,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "tray_shift_01",
+      "pack": "sand-table",
+      "file": "one_shots/sand/tray-shift-01.wav",
+      "prompt": "wooden tray nudged slightly on a soft cloth surface, brief warm shift, close-mic ASMR, no music",
+      "duration_seconds": 1.5,
+      "prompt_influence": 0.75
+    }
+  ]
+}

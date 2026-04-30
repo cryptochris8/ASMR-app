@@ -11,7 +11,8 @@
     "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
     "cap:android": "npm run build && npx cap sync android && npx cap open android",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "gen:audio": "node scripts/generate-audio.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.2.0",

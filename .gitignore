@@ -6,6 +6,7 @@ android/
 *.log
 .env
 .env.*
+!.env.example
 
 # Audio originals backup (large unprocessed files)
 public/audio/_originals/
