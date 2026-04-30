@@ -12,7 +12,8 @@
     "cap:android": "npm run build && npx cap sync android && npx cap open android",
     "test": "vitest run",
     "test:watch": "vitest",
-    "gen:audio": "node scripts/generate-audio.js"
+    "gen:audio": "node scripts/generate-audio.js",
+    "gen:skyboxes": "node scripts/generate-skyboxes.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.2.0",

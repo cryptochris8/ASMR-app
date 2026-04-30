@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skyboxes": [
+    {
+      "id": "warm-neutral",
+      "file": "warm-neutral.jpg",
+      "prompt": "minimal warm sand-toned interior at dusk, soft amber ambient light, no harsh horizon line, equirectangular 360 panorama, smooth desaturated meditative backdrop, calm and quiet atmosphere, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, bright highlights, vivid colors, signage"
+    }
+  ]
+}
