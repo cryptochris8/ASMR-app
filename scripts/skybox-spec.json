@@ -6,6 +6,42 @@
       "file": "warm-neutral.jpg",
       "prompt": "minimal warm sand-toned interior at dusk, soft amber ambient light, no harsh horizon line, equirectangular 360 panorama, smooth desaturated meditative backdrop, calm and quiet atmosphere, no people, no text",
       "negative_text": "people, text, watermark, harsh sun, bright highlights, vivid colors, signage"
+    },
+    {
+      "id": "warm-neutral2",
+      "file": "warm-neutral2.jpg",
+      "prompt": "adobe southwestern desert courtyard at dusk, soft pastel pink and lavender sky, small still pool reflecting the sky, warm sand-toned walls, distant mauve mountains on the horizon, sparse desert plants, equirectangular 360 panorama, calm and meditative, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, bright highlights, vivid colors, signage, vehicles"
+    },
+    {
+      "id": "fireplace-cabin",
+      "file": "fireplace-cabin.jpg",
+      "prompt": "cozy rustic log cabin interior at night, stone fireplace with a warm glowing fire, leather armchairs, patterned rugs on a wooden floor, snowy forest visible through the windows, hanging lantern softly illuminating the wood-beam ceiling, equirectangular 360 panorama, warm amber light, intimate and restful atmosphere, no people, no text",
+      "negative_text": "people, text, watermark, harsh light, vivid saturated colors, signage, modern electronics"
+    },
+    {
+      "id": "forest-rain-night",
+      "file": "forest-rain-night.jpg",
+      "prompt": "dense old-growth pine forest at night, tall trunks with mossy roots, soft moonlight filtering through the canopy, faint mist between trees, deep blue and green tones, equirectangular 360 panorama, quiet and contemplative, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, animals, structures"
+    },
+    {
+      "id": "mountain-dusk",
+      "file": "mountain-dusk.jpg",
+      "prompt": "snow-covered mountain range at dusk, small turquoise glacial lake in the foreground, soft violet and lavender sky, scattered purple alpine wildflowers, gentle pink alpenglow on distant peaks, equirectangular 360 panorama, serene and expansive, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, vehicles, structures"
+    },
+    {
+      "id": "ocean-night",
+      "file": "ocean-night.jpg",
+      "prompt": "tropical beach at night, calm waves lapping a sand spit, milky way arching across a deep navy sky, low moon over a distant island silhouette, faint warm coastal lights in the distance, equirectangular 360 panorama, peaceful and dreamy, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, boats, modern structures"
+    },
+    {
+      "id": "temple-zen",
+      "file": "temple-zen.jpg",
+      "prompt": "traditional Japanese zen temple courtyard at blue hour, raked sand garden, shoji paper screens, warm paper lanterns lining a covered walkway, dark tile roofs, soft pine trees in the distance, equirectangular 360 panorama, contemplative and quiet, no people, no text",
+      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, modern objects"
     }
   ]
 }
