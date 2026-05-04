@@ -10,8 +10,8 @@
     {
       "id": "warm-neutral2",
       "file": "warm-neutral2.jpg",
-      "prompt": "adobe southwestern desert courtyard at dusk, soft pastel pink and lavender sky, small still pool reflecting the sky, warm sand-toned walls, distant mauve mountains on the horizon, sparse desert plants, equirectangular 360 panorama, calm and meditative, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, bright highlights, vivid colors, signage, vehicles"
+      "prompt": "A serene desert oasis bathed in the gentle glow of dusk, with the soft amber light casting a warm gradient on the smooth stucco walls, creating a deeply meditative atmosphere with a slightly desaturated palette.",
+      "negative_text": "people, text, watermark, signage, harsh sunlight, bright highlights, vivid saturated colors, animals, lens flare"
     },
     {
       "id": "fireplace-cabin",
