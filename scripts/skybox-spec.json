@@ -16,8 +16,8 @@
     {
       "id": "fireplace-cabin",
       "file": "fireplace-cabin.jpg",
-      "prompt": "cozy rustic log cabin interior at night, stone fireplace with a warm glowing fire, leather armchairs, patterned rugs on a wooden floor, snowy forest visible through the windows, hanging lantern softly illuminating the wood-beam ceiling, equirectangular 360 panorama, warm amber light, intimate and restful atmosphere, no people, no text",
-      "negative_text": "people, text, watermark, harsh light, vivid saturated colors, signage, modern electronics"
+      "prompt": "A cozy wooden cabin interior glows warmly at night, the stone fireplace casting an orange flicker on log walls, a low lamp softly illuminating a side table beside a plush fur rug, a solitary armchair facing a snowy scene through a small window.",
+      "negative_text": "people, text, electronics, modern furniture, harsh sunlight, brand logos, clocks with text"
     },
     {
       "id": "forest-rain-night",
