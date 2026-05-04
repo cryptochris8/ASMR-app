@@ -48,6 +48,12 @@
       "file": "spa-bathroom.jpg",
       "prompt": "A contemporary spa bathroom gleams with white tiles, accented by soft green plants basking in natural sunlight filtering through frosted glass, creating a clean, fresh ambiance with hints of steam rising from polished surfaces, exuding a calming aura.",
       "negative_text": "people, person, Dark, dirty, grungy, cluttered, night, neon, people, text, old car"
+    },
+    {
+      "id": "library-nook",
+      "file": "library-nook.jpg",
+      "prompt": "A snug library nook beckons with a crackling fireplace casting a soft glow on mahogany walls, a plush armchair nestled beside overflowing bookcases, a knitted throw cascading over a sofa, all bathed in a warm amber light filtering through rain-streaked windows.",
+      "negative_text": "people, text, modern electronics, screens, TVs, harsh light, brand logos"
     }
   ]
 }
