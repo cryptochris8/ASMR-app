@@ -28,8 +28,8 @@
     {
       "id": "mountain-dusk",
       "file": "mountain-dusk.jpg",
-      "prompt": "snow-covered mountain range at dusk, small turquoise glacial lake in the foreground, soft violet and lavender sky, scattered purple alpine wildflowers, gentle pink alpenglow on distant peaks, equirectangular 360 panorama, serene and expansive, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, vehicles, structures"
+      "prompt": "A tranquil high-altitude mountain valley at twilight, with an ethereal indigo and lavender sky casting a soft glow over snow-capped peaks melting into dusk, while a distant alpine lake mirrors the fading light, enveloped in a profound, contemplative stillness.",
+      "negative_text": "people, hikers, tents, text, daylight, vivid sunset reds, lens flare, aircraft, satellites"
     },
     {
       "id": "ocean-night",
