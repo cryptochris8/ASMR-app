@@ -60,6 +60,12 @@
       "file": "suburban-rain.jpg",
       "prompt": "A tranquil suburban street at midnight glistens under the soft glow of amber streetlamps, with rain-soaked pavement mirroring the night sky's dark indigo hue, a gentle mist weaving between houses in a deeply serene and still atmosphere.",
       "negative_text": "people, moving cars, headlights, bright sky, text, signs, lightning, billboards"
+    },
+    {
+      "id": "pnw-waterfall",
+      "file": "pnw-waterfall.jpg",
+      "prompt": "A serene beach bathed in moonlight overlooks the dark, tranquil Pacific Ocean, where gentle waves meet the deep navy water under a midnight blue sky dotted with faint stars, while a wide river flows alongside a moss-covered waterfall cascading over boulders, surrounded by wild flowers and trees in the Pacific Northwest.",
+      "negative_text": "people, boats, ships, text, sunlight, bright moon glare, beach umbrellas, footprints, driftwood text"
     }
   ]
 }
