@@ -40,8 +40,8 @@
     {
       "id": "temple-zen",
       "file": "temple-zen.jpg",
-      "prompt": "traditional Japanese zen temple courtyard at blue hour, raked sand garden, shoji paper screens, warm paper lanterns lining a covered walkway, dark tile roofs, soft pine trees in the distance, equirectangular 360 panorama, contemplative and quiet, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, modern objects"
+      "prompt": "A serene Japanese temple interior at dusk, bathed in a soft paper-lantern glow, with a polished wood floor reflecting the tranquility of a raked sand garden seen through an open shoji screen, against a backdrop of gentle blue twilight, creating a deeply still and meditative atmosphere.",
+      "negative_text": "people, text, kanji or written characters, harsh light, modern objects, electrical wires"
     },
     {
       "id": "spa-bathroom",
