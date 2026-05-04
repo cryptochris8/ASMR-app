@@ -4,8 +4,8 @@
     {
       "id": "warm-neutral",
       "file": "warm-neutral.jpg",
-      "prompt": "minimal warm sand-toned interior at dusk, soft amber ambient light, no harsh horizon line, equirectangular 360 panorama, smooth desaturated meditative backdrop, calm and quiet atmosphere, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, bright highlights, vivid colors, signage"
+      "prompt": "A serene desert oasis at twilight, bathed in gentle golden light, casting a soft glow on the velvety sandstone walls, evoking a contemplative mood with a subdued color scheme.",
+      "negative_text": "people, text, watermark, signage, harsh sunlight, bright highlights, vivid saturated colors, animals, lens flare"
     },
     {
       "id": "warm-neutral2",
