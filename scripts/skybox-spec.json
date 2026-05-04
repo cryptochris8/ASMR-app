@@ -22,8 +22,8 @@
     {
       "id": "forest-rain-night",
       "file": "forest-rain-night.jpg",
-      "prompt": "dense old-growth pine forest at night, tall trunks with mossy roots, soft moonlight filtering through the canopy, faint mist between trees, deep blue and green tones, equirectangular 360 panorama, quiet and contemplative, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, animals, structures"
+      "prompt": "A tranquil pine forest enveloped in a gentle night rain, with ethereal moonlight piercing the dense canopy, casting a soft glow on the mist weaving through the trunks, painting the scene in deep greens and dark blues, while the moss-covered ground lies undisturbed beneath the carpet of fallen needles.",
+      "negative_text": "people, animals, daytime, fire, text, fantasy elements, glowing mushrooms, magical effects"
     },
     {
       "id": "mountain-dusk",
