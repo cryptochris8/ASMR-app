@@ -34,8 +34,8 @@
     {
       "id": "ocean-night",
       "file": "ocean-night.jpg",
-      "prompt": "tropical beach at night, calm waves lapping a sand spit, milky way arching across a deep navy sky, low moon over a distant island silhouette, faint warm coastal lights in the distance, equirectangular 360 panorama, peaceful and dreamy, no people, no text",
-      "negative_text": "people, text, watermark, harsh sun, vivid saturated colors, signage, boats, modern structures"
+      "prompt": "A tranquil, moonlit beach looks out over a dark, calm ocean under a midnight sky, where gentle waves meet the deep navy waters, dotted with faint, scattered stars in the vast, silent expanse.",
+      "negative_text": "people, animals, daytime, fire, text, fantasy elements, glowing mushrooms, magical effects"
     },
     {
       "id": "temple-zen",
