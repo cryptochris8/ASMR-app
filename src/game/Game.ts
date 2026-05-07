@@ -19,6 +19,7 @@ import { RainWindowScene } from '../scenes/RainWindowScene';
 import { CozyRoomScene } from '../scenes/CozyRoomScene';
 import { SandTableScene } from '../scenes/SandTableScene';
 import { TempleZenScene } from '../scenes/TempleZenScene';
+import { HotspotEditor } from '../dev/HotspotEditor';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
 import { SplashScreen } from '../ui/splash';
@@ -167,6 +168,13 @@ export class Game {
 
     // Init native (Capacitor)
     initNative();
+
+    // Dev-only: hotspot placement tool. Activate with ?hotspots=edit in URL.
+    if (new URLSearchParams(location.search).get('hotspots') === 'edit') {
+      const editor = new HotspotEditor(this.renderer.domElement, this.camera, this.store);
+      editor.enable();
+      (window as any).__hotspotEditor = editor;
+    }
   }
 
   private async startupFlow(container: HTMLElement): Promise<void> {
