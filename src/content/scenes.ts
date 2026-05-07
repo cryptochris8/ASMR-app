@@ -54,6 +54,19 @@ export const SCENES: SceneDef[] = [
     bgColor: 0x0e0c08,
     thumbnailColor: 0xccbb88,
   },
+  {
+    id: 'temple-zen',
+    name: 'Zen Temple',
+    description: 'Quiet temple courtyard at dusk',
+    moodLabel: 'Still & Meditative',
+    premium: true,
+    skybox: 'temple-zen',
+    skyboxRotationY: Math.PI,
+    ambientSoundPack: 'tone',
+    interactionSounds: [],
+    bgColor: 0x0a0e14,
+    thumbnailColor: 0x5a6878,
+  },
 ];
 
 export function getScene(id: SceneId): SceneDef | undefined {

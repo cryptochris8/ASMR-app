@@ -1,4 +1,4 @@
-export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table';
+export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table' | 'temple-zen';
 export type SoundPackId = string;
 export type SubscriptionTier = 'free' | 'premium';
 

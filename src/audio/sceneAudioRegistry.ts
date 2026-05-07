@@ -196,6 +196,60 @@ export const SCENE_AUDIO_REGISTRY: SceneAudioDef[] = [
       { id: 'tray_shift_01', file: 'one_shots/sand/tray-shift-01.wav', minIntervalMs: 20000, maxVolume: 0.15, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
     ],
   },
+
+  // ============================================
+  // ZEN TEMPLE SCENE
+  // ============================================
+  {
+    sceneId: 'temple-zen',
+
+    baseAmbience: [
+      {
+        id: 'zen_temple_loop_01', file: 'ambient/zen-temple-loop-01.wav',
+        isPlaceholder: false, needsReplacement: false, isPremium: true,
+        interactionCategory: 'ambient',
+        recommendedUse: 'Primary zen temple ambience — distant pine wind + singing bowl drone',
+      },
+    ],
+
+    taps: [
+      {
+        surface: 'sand',
+        sounds: [
+          { id: 'sand_pat_zen_01', file: 'interactions/tap/sand/sand-pat-zen-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+          { id: 'sand_pat_zen_02', file: 'interactions/tap/sand/sand-pat-zen-02.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+          { id: 'sand_pat_zen_03', file: 'interactions/tap/sand/sand-pat-zen-03.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+          { id: 'sand_pat_zen_04', file: 'interactions/tap/sand/sand-pat-zen-04.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+    ],
+
+    drags: [
+      {
+        surface: 'sand',
+        loops: [
+          { id: 'sand_rake_loop_01', file: 'interactions/drag/sand/sand-rake-loop-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'drag' },
+          { id: 'sand_trail_loop_01', file: 'interactions/drag/sand/sand-trail-loop-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'drag' },
+          { id: 'sand_grain_loop_zen_01', file: 'interactions/drag/sand/sand-grain-loop-zen-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'drag' },
+        ],
+      },
+    ],
+
+    holds: [
+      {
+        surface: 'sand',
+        loops: [
+          { id: 'zen_hold_pad_01', file: 'interactions/hold/zen-hold-pad-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+    ],
+
+    ambientOneShots: [
+      { id: 'temple_bell_distant_01', file: 'one_shots/zen/temple-bell-distant-01.wav', minIntervalMs: 45000, maxVolume: 0.3, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
+      { id: 'temple_bell_distant_02', file: 'one_shots/zen/temple-bell-distant-02.wav', minIntervalMs: 60000, maxVolume: 0.22, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
+      { id: 'shoji_creak_01', file: 'one_shots/zen/shoji-creak-01.wav', minIntervalMs: 35000, maxVolume: 0.15, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
+    ],
+  },
 ];
 
 export function getSceneAudio(sceneId: string): SceneAudioDef | undefined {

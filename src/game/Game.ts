@@ -18,6 +18,7 @@ import { GyroLookSystem } from '../systems/gyro-look';
 import { RainWindowScene } from '../scenes/RainWindowScene';
 import { CozyRoomScene } from '../scenes/CozyRoomScene';
 import { SandTableScene } from '../scenes/SandTableScene';
+import { TempleZenScene } from '../scenes/TempleZenScene';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
 import { SplashScreen } from '../ui/splash';
@@ -85,6 +86,7 @@ export class Game {
     this.sceneController.register('rain-window', () => new RainWindowScene());
     this.sceneController.register('cozy-room', () => new CozyRoomScene());
     this.sceneController.register('sand-table', () => new SandTableScene());
+    this.sceneController.register('temple-zen', () => new TempleZenScene());
 
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);

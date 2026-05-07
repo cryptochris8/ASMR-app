@@ -276,6 +276,107 @@
       "prompt": "wooden tray nudged slightly on a soft cloth surface, brief warm shift, close-mic ASMR, no music",
       "duration_seconds": 1.5,
       "prompt_influence": 0.75
+    },
+
+    {
+      "id": "zen_temple_loop_01",
+      "pack": "temple-zen",
+      "file": "ambient/zen-temple-loop-01.wav",
+      "prompt": "very quiet zen temple courtyard ambience at dusk, distant pine wind, soft sustained singing bowl drone, calm and meditative, no melody, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "sand_pat_zen_01",
+      "pack": "temple-zen",
+      "file": "interactions/tap/sand/sand-pat-zen-01.wav",
+      "prompt": "single soft fingertip pat on raked dry temple sand, very short muffled thud, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "sand_pat_zen_02",
+      "pack": "temple-zen",
+      "file": "interactions/tap/sand/sand-pat-zen-02.wav",
+      "prompt": "soft fingertip touch on fine garden sand, brief soft puff, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "sand_pat_zen_03",
+      "pack": "temple-zen",
+      "file": "interactions/tap/sand/sand-pat-zen-03.wav",
+      "prompt": "gentle pat on dry raked sand, very short muted thud with faint grain, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "sand_pat_zen_04",
+      "pack": "temple-zen",
+      "file": "interactions/tap/sand/sand-pat-zen-04.wav",
+      "prompt": "fingertip press into soft cool sand, brief muffled tap with subtle grit, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "sand_rake_loop_01",
+      "pack": "temple-zen",
+      "file": "interactions/drag/sand/sand-rake-loop-01.wav",
+      "prompt": "fingers slowly raking through fine dry zen garden sand, soft continuous granular shush, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+    {
+      "id": "sand_trail_loop_01",
+      "pack": "temple-zen",
+      "file": "interactions/drag/sand/sand-trail-loop-01.wav",
+      "prompt": "slow fingertip trailing through cool temple sand, gentle continuous soft hiss with subtle grit, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+    {
+      "id": "sand_grain_loop_zen_01",
+      "pack": "temple-zen",
+      "file": "interactions/drag/sand/sand-grain-loop-zen-01.wav",
+      "prompt": "fine sand grains shifting and sliding against each other under slow movement, soft continuous granular trickle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.55
+    },
+
+    {
+      "id": "zen_hold_pad_01",
+      "pack": "temple-zen",
+      "file": "interactions/hold/zen-hold-pad-01.wav",
+      "prompt": "sustained low singing bowl drone with slow soft swell, soothing meditative pad, no melody, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "temple_bell_distant_01",
+      "pack": "temple-zen",
+      "file": "one_shots/zen/temple-bell-distant-01.wav",
+      "prompt": "single deep Japanese temple bell ringing in the far distance, slow soft attack with long natural decay into silence, no music, no voice",
+      "duration_seconds": 4,
+      "prompt_influence": 0.75
+    },
+    {
+      "id": "temple_bell_distant_02",
+      "pack": "temple-zen",
+      "file": "one_shots/zen/temple-bell-distant-02.wav",
+      "prompt": "very faint Japanese temple bell from far away at dusk, soft warm tone with long decay into silence, no music, no voice",
+      "duration_seconds": 4,
+      "prompt_influence": 0.75
+    },
+    {
+      "id": "shoji_creak_01",
+      "pack": "temple-zen",
+      "file": "one_shots/zen/shoji-creak-01.wav",
+      "prompt": "subtle wooden temple post creak, very short soft groan of old beam, close-mic ASMR, no music",
+      "duration_seconds": 1.5,
+      "prompt_influence": 0.8
     }
   ]
 }
