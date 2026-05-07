@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import { IScene, SceneInitParams, HitResult } from './IScene';
 
+const PLANE_Y = -0.5;
+const PLANE_SIZE = 10;
+
 export class SandTableScene implements IScene {
   readonly id = 'sand-table';
   readonly group: THREE.Group;
 
-  private sandMesh: THREE.Mesh;
   private trailMesh: THREE.Mesh;
   private trailCanvas: HTMLCanvasElement;
   private trailCtx: CanvasRenderingContext2D;
@@ -16,38 +18,32 @@ export class SandTableScene implements IScene {
   private lastU = -1;
   private lastV = -1;
   private idleFrames = 0;
-  private dirty = false;
 
   constructor() {
     this.group = new THREE.Group();
 
-    // Flat circular sand surface, tilted camera-facing
-    const sandGeo = new THREE.CircleGeometry(1, 64);
-    const sandMat = new THREE.MeshBasicMaterial({ color: 0xc4a877 });
-    this.sandMesh = new THREE.Mesh(sandGeo, sandMat);
-    this.sandMesh.rotation.x = -Math.PI * 0.18; // slight tilt toward camera
-    this.sandMesh.name = 'sand-surface';
-    this.group.add(this.sandMesh);
-
-    // Sand drag trail canvas overlay
-    const size = 512;
+    const size = 1024;
     this.trailCanvas = document.createElement('canvas');
     this.trailCanvas.width = size;
     this.trailCanvas.height = size;
     this.trailCtx = this.trailCanvas.getContext('2d')!;
     this.trailTexture = new THREE.CanvasTexture(this.trailCanvas);
+    this.trailTexture.colorSpace = THREE.SRGBColorSpace;
+    this.trailTexture.anisotropy = 8;
 
-    const trailGeo = new THREE.CircleGeometry(1, 64);
-    const trailMat = new THREE.MeshBasicMaterial({
+    const planeGeo = new THREE.PlaneGeometry(PLANE_SIZE, PLANE_SIZE);
+    const planeMat = new THREE.MeshBasicMaterial({
       map: this.trailTexture,
       transparent: true,
       depthWrite: false,
+      depthTest: false,
       blending: THREE.NormalBlending,
     });
-    this.trailMesh = new THREE.Mesh(trailGeo, trailMat);
-    this.trailMesh.rotation.x = -Math.PI * 0.18;
-    this.trailMesh.position.z = 0.002; // just in front of sand surface
+    this.trailMesh = new THREE.Mesh(planeGeo, planeMat);
+    this.trailMesh.rotation.x = -Math.PI / 2;
+    this.trailMesh.position.y = PLANE_Y;
     this.trailMesh.renderOrder = 2;
+    this.trailMesh.name = 'sand-touch-zone';
     this.group.add(this.trailMesh);
   }
 
@@ -82,19 +78,18 @@ export class SandTableScene implements IScene {
 
   update(_dt: number): void {
     this.idleFrames++;
-    if (this.idleFrames <= 120) {
-      const s = this.trailCanvas.width;
+    const s = this.trailCanvas.width;
+    if (this.idleFrames === 360) {
+      this.trailCtx.clearRect(0, 0, s, s);
+    } else {
+      const fadeAlpha = this.idleFrames < 60 ? 0.012 : 0.025;
       this.trailCtx.globalCompositeOperation = 'destination-out';
-      this.trailCtx.globalAlpha = 0.008;
+      this.trailCtx.globalAlpha = fadeAlpha;
       this.trailCtx.fillRect(0, 0, s, s);
       this.trailCtx.globalCompositeOperation = 'source-over';
       this.trailCtx.globalAlpha = 1;
-      this.dirty = true;
     }
-    if (this.dirty) {
-      this.trailTexture.needsUpdate = true;
-      this.dirty = false;
-    }
+    this.trailTexture.needsUpdate = true;
   }
 
   drawTrail(u: number, v: number): void {
@@ -105,8 +100,8 @@ export class SandTableScene implements IScene {
     if (this.lastU >= 0) {
       const lx = this.lastU * s;
       const ly = (1 - this.lastV) * s;
-      this.trailCtx.strokeStyle = 'rgba(90, 60, 30, 0.35)';
-      this.trailCtx.lineWidth = 22;
+      this.trailCtx.strokeStyle = 'rgba(120, 88, 58, 0.32)';
+      this.trailCtx.lineWidth = 38;
       this.trailCtx.lineCap = 'round';
       this.trailCtx.lineJoin = 'round';
       this.trailCtx.beginPath();
@@ -117,7 +112,6 @@ export class SandTableScene implements IScene {
 
     this.lastU = u;
     this.lastV = v;
-    this.dirty = true;
     this.idleFrames = 0;
   }
 
@@ -130,7 +124,7 @@ export class SandTableScene implements IScene {
     if (!this._camera) return null;
     this._ndc.set(ndc.x, ndc.y);
     this.raycaster.setFromCamera(this._ndc, this._camera);
-    const hits = this.raycaster.intersectObject(this.sandMesh);
+    const hits = this.raycaster.intersectObject(this.trailMesh);
     if (hits.length === 0) return null;
     return {
       uv: hits[0].uv ? new THREE.Vector2(hits[0].uv.x, hits[0].uv.y) : undefined,
@@ -139,8 +133,6 @@ export class SandTableScene implements IScene {
   }
 
   dispose(): void {
-    this.sandMesh.geometry.dispose();
-    (this.sandMesh.material as THREE.Material).dispose();
     this.trailMesh.geometry.dispose();
     (this.trailMesh.material as THREE.Material).dispose();
     this.trailTexture.dispose();
