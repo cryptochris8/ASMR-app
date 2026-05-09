@@ -20,7 +20,8 @@ export interface AssetStatus {
  *  named hotspot identifiers used by skybox-with-hotspots scenes. */
 export type SurfaceType =
   | 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic'
-  | 'fireplace' | 'speaker' | 'bookshelf' | 'armchair' | 'pot';
+  | 'fireplace' | 'speaker' | 'bookshelf' | 'armchair' | 'pot'
+  | 'jars' | 'spellbook' | 'candles' | 'herbs' | 'scale' | 'mortar';
 
 /** Interaction sound categories */
 export type InteractionCategory = 'tap' | 'drag' | 'hold';

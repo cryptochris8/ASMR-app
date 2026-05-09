@@ -67,6 +67,19 @@ export const SCENES: SceneDef[] = [
     bgColor: 0x0a0e14,
     thumbnailColor: 0x5a6878,
   },
+  {
+    id: 'apothecary-shop',
+    name: 'Apothecary Shop',
+    description: 'Bubbling cauldron, glass jars, hanging herbs in a mystical herbalist shop',
+    moodLabel: 'Mystical & Warm',
+    premium: true,
+    skybox: 'apothecary-shop',
+    skyboxRotationY: 0, // adjust after previewing
+    ambientSoundPack: 'tone',
+    interactionSounds: [],
+    bgColor: 0x140a04,
+    thumbnailColor: 0xcc7733,
+  },
 ];
 
 export function getScene(id: SceneId): SceneDef | undefined {

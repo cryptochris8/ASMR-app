@@ -26,6 +26,14 @@ export const SCENE_HOTSPOTS: Partial<Record<SceneId, HotspotDef[]>> = {
     { id: 'armchair',  yawDeg:  117.23, pitchDeg: -12.72, radiusDeg: 14, surface: 'armchair', label: 'Armchair' },
     { id: 'pot',       yawDeg: -114.63, pitchDeg: -23.40, radiusDeg: 10, surface: 'pot',      label: 'Wooden pot' },
   ],
+  'apothecary-shop': [
+    { id: 'jars',      yawDeg: -42.93, pitchDeg:   8.50, radiusDeg: 14, surface: 'jars',      label: 'Brass jars' },
+    { id: 'spellbook', yawDeg: -25.87, pitchDeg: -30.65, radiusDeg: 12, surface: 'spellbook', label: 'Spell book' },
+    { id: 'candles',   yawDeg: -48.42, pitchDeg: -19.05, radiusDeg: 14, surface: 'candles',   label: 'Beeswax candles' },
+    { id: 'herbs',     yawDeg:  58.91, pitchDeg: -12.15, radiusDeg: 12, surface: 'herbs',     label: 'Hanging herbs' },
+    { id: 'scale',     yawDeg:  74.05, pitchDeg: -18.18, radiusDeg: 10, surface: 'scale',     label: 'Brass scale' },
+    { id: 'mortar',    yawDeg: -41.84, pitchDeg: -34.80, radiusDeg: 10, surface: 'mortar',    label: 'Mortar' },
+  ],
 };
 
 export function getHotspots(sceneId: SceneId): HotspotDef[] {

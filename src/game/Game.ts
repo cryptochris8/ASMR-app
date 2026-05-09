@@ -19,6 +19,7 @@ import { RainWindowScene } from '../scenes/RainWindowScene';
 import { CozyRoomScene } from '../scenes/CozyRoomScene';
 import { SandTableScene } from '../scenes/SandTableScene';
 import { TempleZenScene } from '../scenes/TempleZenScene';
+import { ApothecaryShopScene } from '../scenes/ApothecaryShopScene';
 import { HotspotEditor } from '../dev/HotspotEditor';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
@@ -88,6 +89,7 @@ export class Game {
     this.sceneController.register('cozy-room', () => new CozyRoomScene());
     this.sceneController.register('sand-table', () => new SandTableScene());
     this.sceneController.register('temple-zen', () => new TempleZenScene());
+    this.sceneController.register('apothecary-shop', () => new ApothecaryShopScene());
 
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);
@@ -316,7 +318,7 @@ export class Game {
         // Hotspot scenes: require a hit and use the hotspot's surface.
         // Outside any hotspot = silent.
         let tapSurface = surface;
-        if (activeScene === 'cozy-room') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) {
             this.store.update({ isInteracting: true, interactionType: 'tap' });
@@ -331,6 +333,11 @@ export class Game {
         if (activeScene === 'cozy-room' && tapSurface === 'speaker') {
           const crs = this.sceneController.current() as CozyRoomScene | null;
           crs?.toggleSpeakerMusic();
+        }
+        // Sticky candles: tap-to-toggle flicker loop
+        if (activeScene === 'apothecary-shop' && tapSurface === 'candles') {
+          const aps = this.sceneController.current() as ApothecaryShopScene | null;
+          aps?.toggleCandleFlicker();
         }
 
         if (activeScene === 'rain-window') {
@@ -430,7 +437,7 @@ export class Game {
         this.playerHUD.bringUpUI();
 
         let holdSurface = surface;
-        if (activeScene === 'cozy-room') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) return;
           holdSurface = hit.surface as typeof surface;

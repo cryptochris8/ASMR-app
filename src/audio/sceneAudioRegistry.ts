@@ -273,6 +273,95 @@ export const SCENE_AUDIO_REGISTRY: SceneAudioDef[] = [
       { id: 'shoji_creak_01', file: 'one_shots/zen/shoji-creak-01.wav', minIntervalMs: 35000, maxVolume: 0.15, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
     ],
   },
+
+  // ============================================
+  // APOTHECARY SHOP SCENE — hotspot-driven (skybox + 6 hotspots)
+  // ============================================
+  {
+    sceneId: 'apothecary-shop',
+
+    baseAmbience: [
+      {
+        id: 'apothecary_room_loop_01', file: 'ambient/apothecary-room-loop-01.wav',
+        isPremium: true, interactionCategory: 'ambient',
+        recommendedUse: 'Warm dim apothecary shop ambience',
+      },
+    ],
+
+    taps: [
+      {
+        surface: 'jars',
+        sounds: [
+          { id: 'jar_clink_01', file: 'interactions/tap/jars/jar-clink-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'jar_clink_02', file: 'interactions/tap/jars/jar-clink-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'jar_clink_03', file: 'interactions/tap/jars/jar-clink-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'spellbook',
+        sounds: [
+          { id: 'spellbook_page_01', file: 'interactions/tap/spellbook/spellbook-page-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'spellbook_page_02', file: 'interactions/tap/spellbook/spellbook-page-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'spellbook_page_03', file: 'interactions/tap/spellbook/spellbook-page-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'candles',
+        sounds: [
+          { id: 'candle_puff_01', file: 'interactions/tap/candles/candle-puff-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'candle_puff_02', file: 'interactions/tap/candles/candle-puff-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'herbs',
+        sounds: [
+          { id: 'herb_rustle_01', file: 'interactions/tap/herbs/herb-rustle-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'herb_rustle_02', file: 'interactions/tap/herbs/herb-rustle-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'herb_rustle_03', file: 'interactions/tap/herbs/herb-rustle-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'scale',
+        sounds: [
+          { id: 'scale_tick_01', file: 'interactions/tap/scale/scale-tick-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'scale_tick_02', file: 'interactions/tap/scale/scale-tick-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'mortar',
+        sounds: [
+          { id: 'mortar_clack_01', file: 'interactions/tap/mortar/mortar-clack-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'mortar_clack_02', file: 'interactions/tap/mortar/mortar-clack-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+    ],
+
+    drags: [],
+
+    holds: [
+      {
+        surface: 'spellbook',
+        loops: [
+          { id: 'spellbook_pages_loop_01', file: 'interactions/hold/spellbook/spellbook-pages-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      // Candles is sticky tap-to-toggle (handled in ApothecaryShopScene), not a normal hold
+      {
+        surface: 'herbs',
+        loops: [
+          { id: 'herb_rustle_loop_01', file: 'interactions/hold/herbs/herb-rustle-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'mortar',
+        loops: [
+          { id: 'mortar_grind_loop_01', file: 'interactions/hold/mortar/mortar-grind-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+    ],
+
+    ambientOneShots: [],
+  },
 ];
 
 export function getSceneAudio(sceneId: string): SceneAudioDef | undefined {

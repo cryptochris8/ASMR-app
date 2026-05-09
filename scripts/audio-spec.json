@@ -531,6 +531,177 @@
       "prompt": "single soft tap of wooden lid against a wooden pot rim, very short hollow thock, close-mic ASMR, no music",
       "duration_seconds": 0.8,
       "prompt_influence": 0.8
+    },
+
+    {
+      "id": "apothecary_room_loop_01",
+      "pack": "apothecary-shop",
+      "file": "ambient/apothecary-room-loop-01.wav",
+      "prompt": "warm dim apothecary shop ambience, subtle wooden creaks, faint distant herb rustle, soft amber atmosphere, intimate calm space, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "jar_clink_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/jars/jar-clink-01.wav",
+      "prompt": "single soft fingertip tap on a glass apothecary jar, brief delicate clink, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "jar_clink_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/jars/jar-clink-02.wav",
+      "prompt": "gentle fingernail tap on a glass jar lid, very short bright tink, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "jar_clink_03",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/jars/jar-clink-03.wav",
+      "prompt": "soft tap on a brass-stoppered apothecary bottle, brief muted clink, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "spellbook_page_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/spellbook/spellbook-page-01.wav",
+      "prompt": "single soft turning of an old parchment book page, brief gentle paper crinkle, close-mic ASMR, no music",
+      "duration_seconds": 0.9,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "spellbook_page_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/spellbook/spellbook-page-02.wav",
+      "prompt": "fingertip flicking edge of an aged parchment page, very short crisp paper sound, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "spellbook_page_03",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/spellbook/spellbook-page-03.wav",
+      "prompt": "old leather-bound spell book page turning, brief warm parchment rustle, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "spellbook_pages_loop_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/hold/spellbook/spellbook-pages-loop-01.wav",
+      "prompt": "slow continuous turning of aged parchment book pages, gentle steady paper rustle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "candle_puff_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/candles/candle-puff-01.wav",
+      "prompt": "single soft breath blowing out a small candle, brief gentle puff of air with very faint hiss, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "candle_puff_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/candles/candle-puff-02.wav",
+      "prompt": "soft short puff blowing out a beeswax candle flame, very brief breath, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "candle_flicker_loop_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/hold/candles/candle-flicker-loop-01.wav",
+      "prompt": "very soft warm continuous candle flame flicker, gentle subtle crackling and quiet whisper of small fire, intimate close-mic ASMR, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "herb_rustle_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/herbs/herb-rustle-01.wav",
+      "prompt": "single soft rustle of dried lavender bunch hanging from a beam, brief gentle leaf crinkle, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "herb_rustle_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/herbs/herb-rustle-02.wav",
+      "prompt": "gentle touch of dried herb bundle, very short soft rustle of dried leaves, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "herb_rustle_03",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/herbs/herb-rustle-03.wav",
+      "prompt": "fingertip brushing dried lavender stems, brief light papery rustle, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "herb_rustle_loop_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/hold/herbs/herb-rustle-loop-01.wav",
+      "prompt": "slow continuous brushing through hanging bundle of dried lavender, gentle steady leaf rustle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "scale_tick_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/scale/scale-tick-01.wav",
+      "prompt": "single tiny tap on a small brass weighing scale pan, very brief delicate metallic tink, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "scale_tick_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/scale/scale-tick-02.wav",
+      "prompt": "soft fingernail tick on a brass scale arm, very short bright metallic click, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "mortar_clack_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/mortar/mortar-clack-01.wav",
+      "prompt": "single soft tap on a small wooden dish, brief warm hollow clack, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "mortar_clack_02",
+      "pack": "apothecary-shop",
+      "file": "interactions/tap/mortar/mortar-clack-02.wav",
+      "prompt": "gentle pestle tip tap against stone mortar bowl, very short low clack, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "mortar_grind_loop_01",
+      "pack": "apothecary-shop",
+      "file": "interactions/hold/mortar/mortar-grind-loop-01.wav",
+      "prompt": "slow continuous grinding of dried herbs in a stone mortar with stone pestle, gentle steady scrape and crush, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
     }
   ]
 }
