@@ -23,6 +23,7 @@ import { ApothecaryShopScene } from '../scenes/ApothecaryShopScene';
 import { HotspotEditor } from '../dev/HotspotEditor';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
+import { sceneLoadingOverlay } from '../ui/SceneLoadingOverlay';
 import { SplashScreen } from '../ui/splash';
 import { HomeScreen } from '../ui/home';
 import { PlayerHUD } from '../ui/player';
@@ -271,19 +272,30 @@ export class Game {
     this.homeScreen.hide();
     this.playerHUD.show();
 
-    // Transition background then load IScene
-    switchSceneBackground(this.scene, sceneId);
-    const sceneColors = CONFIG.sceneColors[sceneId];
-    if (sceneColors) {
-      updateSceneLighting(this.lights, sceneColors.ambient, sceneColors.directional);
+    // Loading overlay (subtle pulse) while skybox + audio load
+    sceneLoadingOverlay.show();
+
+    try {
+      // Transition background then load IScene
+      switchSceneBackground(this.scene, sceneId);
+      const sceneColors = CONFIG.sceneColors[sceneId];
+      if (sceneColors) {
+        updateSceneLighting(this.lights, sceneColors.ambient, sceneColors.directional);
+      }
+      await this.sceneController.load(sceneId);
+
+      // Load interaction audio first, then bind input so callbacks are ready
+      await this.interactionAudio.loadScene(sceneId);
+      this.setupInput();
+
+      await this.acquireWakeLock();
+    } catch (err) {
+      console.error('[Game] selectScene failed', err);
+      sceneLoadingOverlay.showError("Couldn't load that scene");
+      return;
+    } finally {
+      sceneLoadingOverlay.hide();
     }
-    await this.sceneController.load(sceneId);
-
-    // Load interaction audio first, then bind input so callbacks are ready
-    await this.interactionAudio.loadScene(sceneId);
-    this.setupInput();
-
-    await this.acquireWakeLock();
   }
 
   // =============================================

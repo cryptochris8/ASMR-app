@@ -13,7 +13,7 @@ Five prompt-ready atmospheres for Blockade Labs Skybox AI. Each is deliberately 
 
 - [ ] 1. Vintage train compartment — `train-compartment.jpg`
 - [ ] 2. Antique clockmaker's workshop — `clockmaker-workshop.jpg`
-- [x] 3. Mystical apothecary shop — `apothecary-shop.jpg` *(skybox in place; hotspot placement in progress)*
+- [x] 3. Mystical apothecary shop — `apothecary-shop.jpg` *(complete: 6 hotspots + 20 ElevenLabs assets + Gymnopédie harp music)*
 - [ ] 4. Japanese onsen bathhouse — `onsen-bath.jpg`
 - [ ] 5. Old lighthouse lamp room — `lighthouse-lamp.jpg`
 

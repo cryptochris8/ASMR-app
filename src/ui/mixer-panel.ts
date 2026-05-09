@@ -45,9 +45,9 @@ export class MixerPanel extends UIPanel {
     this.element.setAttribute('aria-labelledby', 'mixer-title');
 
     this.element.innerHTML = `
-      <div class="mixer-backdrop"></div>
+      <div class="mixer-backdrop" aria-hidden="true"></div>
       <div class="mixer-sheet">
-        <div class="mixer-handle"></div>
+        <div class="mixer-handle" aria-hidden="true"></div>
         <h2 class="mixer-title" id="mixer-title">Sound Mixer</h2>
 
         <div class="mixer-section">
@@ -87,7 +87,7 @@ export class MixerPanel extends UIPanel {
               <span class="mixer-label">${pack.name}</span>
               ${pack.premium && !isPremium
                 ? '<span class="mixer-premium-badge">Premium</span>'
-                : `<button class="mixer-layer-toggle" data-pack="${pack.id}" aria-label="${pack.name} layer ${this.isLayerActive(pack.id) ? 'on' : 'off'}, tap to toggle">
+                : `<button type="button" class="mixer-layer-toggle" data-pack="${pack.id}" aria-pressed="${this.isLayerActive(pack.id)}" aria-label="${pack.name} layer ${this.isLayerActive(pack.id) ? 'on' : 'off'}, tap to toggle">
                     ${this.isLayerActive(pack.id) ? 'On' : 'Off'}
                    </button>`
               }
@@ -95,7 +95,7 @@ export class MixerPanel extends UIPanel {
           `).join('')}
         </div>
 
-        <button class="mixer-close-btn">Done</button>
+        <button type="button" class="mixer-close-btn" aria-label="Close mixer">Done</button>
       </div>
     `;
 
@@ -211,7 +211,7 @@ export class MixerPanel extends UIPanel {
       }
       .mixer-title {
         font-size: 18px; font-weight: 500;
-        color: ${CONFIG.colors.text}; margin-bottom: 24px;
+        color: ${CONFIG.colors.text}; margin: 0 0 24px;
         text-align: center;
       }
       .mixer-section {
@@ -224,7 +224,7 @@ export class MixerPanel extends UIPanel {
       }
       .mixer-slider-row {
         display: flex; align-items: center; gap: 12px;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
       }
       .mixer-label {
         font-size: 14px; color: ${CONFIG.colors.text};
@@ -235,22 +235,48 @@ export class MixerPanel extends UIPanel {
         -webkit-appearance: none; appearance: none;
         background: ${CONFIG.colors.surfaceLight};
         border-radius: 2px; outline: none;
+        cursor: pointer;
       }
       .mixer-slider::-webkit-slider-thumb {
         -webkit-appearance: none; appearance: none;
-        width: 20px; height: 20px; border-radius: 50%;
+        width: 22px; height: 22px; border-radius: 50%;
         background: ${CONFIG.colors.primary};
         cursor: pointer;
+        border: 2px solid ${CONFIG.colors.surface};
+        box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        transition: transform 0.2s ease, background 0.4s ease;
+      }
+      .mixer-slider::-webkit-slider-thumb:hover {
+        background: ${CONFIG.colors.primaryLight};
+        transform: scale(1.08);
+      }
+      .mixer-slider::-moz-range-thumb {
+        width: 22px; height: 22px; border-radius: 50%;
+        background: ${CONFIG.colors.primary};
+        cursor: pointer;
+        border: 2px solid ${CONFIG.colors.surface};
+        box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      }
+      .mixer-slider:focus-visible {
+        outline: none;
+      }
+      .mixer-slider:focus-visible::-webkit-slider-thumb {
+        box-shadow: 0 0 0 3px ${CONFIG.colors.primaryLight}80, 0 1px 3px rgba(0,0,0,0.4);
+      }
+      .mixer-slider:focus-visible::-moz-range-thumb {
+        box-shadow: 0 0 0 3px ${CONFIG.colors.primaryLight}80, 0 1px 3px rgba(0,0,0,0.4);
       }
       .mixer-value {
         font-size: 12px; color: ${CONFIG.colors.textMuted};
-        min-width: 36px; text-align: right;
+        min-width: 40px; text-align: right;
+        font-variant-numeric: tabular-nums;
       }
       .mixer-layer-row {
         display: flex; align-items: center;
         justify-content: space-between;
         padding: 10px 0;
         border-bottom: 1px solid ${CONFIG.colors.surfaceLight}40;
+        min-height: 48px;
       }
       .mixer-layer-row.locked { opacity: 0.5; }
       .mixer-layer-toggle {
@@ -258,13 +284,15 @@ export class MixerPanel extends UIPanel {
         border: none; border-radius: 8px;
         padding: 6px 16px; color: ${CONFIG.colors.text};
         font-size: 12px; cursor: pointer;
-        transition: background 0.2s;
-        min-height: 44px;
+        transition: background 0.4s ease;
+        min-height: 36px; min-width: 60px;
       }
+      .mixer-layer-toggle:hover { background: ${CONFIG.colors.primary}30; }
       .mixer-layer-toggle:active { background: ${CONFIG.colors.primary}30; }
+      .mixer-layer-toggle:focus-visible { outline-color: ${CONFIG.colors.primary}; }
       .mixer-premium-badge {
         font-size: 10px; color: ${CONFIG.colors.premium};
-        font-weight: 600;
+        font-weight: 600; letter-spacing: 0.5px;
       }
       .mixer-close-btn {
         width: 100%; padding: 14px; margin-top: 8px;
@@ -272,6 +300,14 @@ export class MixerPanel extends UIPanel {
         border: none; border-radius: 12px;
         color: #fff; font-size: 15px; font-weight: 500;
         cursor: pointer;
+        transition: background 0.4s ease, transform 0.3s ease;
+        min-height: 48px;
+      }
+      .mixer-close-btn:hover { background: ${CONFIG.colors.primaryLight}; }
+      .mixer-close-btn:active { transform: scale(0.99); }
+      .mixer-close-btn:focus-visible {
+        outline-color: ${CONFIG.colors.primaryLight};
+        outline-offset: 4px;
       }
     `;
     document.head.appendChild(style);

@@ -66,14 +66,15 @@ export class OnboardingScreen {
 
     this.el.innerHTML = `
       <div class="onboarding-content">
-        <div class="onboarding-icon">${page.icon}</div>
+        <div class="onboarding-icon" aria-hidden="true">${page.icon}</div>
         <h2 class="onboarding-heading" id="onboarding-heading">${page.heading}</h2>
         <p class="onboarding-body">${page.body}</p>
-        <div class="onboarding-dots">
+        <div class="onboarding-dots" role="presentation" aria-hidden="true">
           ${PAGES.map((_, i) => `<span class="onboarding-dot ${i === this.currentPage ? 'active' : ''}"></span>`).join('')}
         </div>
-        <button class="onboarding-continue-btn">${isLast ? 'Get Started' : 'Continue'}</button>
-        ${!isLast ? '<button class="onboarding-skip-btn">Skip</button>' : ''}
+        <div class="onboarding-progress" aria-live="polite">Step ${this.currentPage + 1} of ${PAGES.length}</div>
+        <button type="button" class="onboarding-continue-btn">${isLast ? 'Get Started' : 'Continue'}</button>
+        <button type="button" class="onboarding-skip-btn">${isLast ? 'Maybe later' : 'Skip'}</button>
       </div>
     `;
 
@@ -124,23 +125,29 @@ export class OnboardingScreen {
       }
       .onboarding-heading {
         font-size: 22px; font-weight: 400; letter-spacing: 0.2px;
-        color: ${CONFIG.colors.text}; margin-bottom: 14px;
+        color: ${CONFIG.colors.text}; margin: 0 0 14px;
         line-height: 1.3;
       }
       .onboarding-body {
-        font-size: 15px; font-weight: 300; line-height: 1.6;
-        color: ${CONFIG.colors.textMuted}; margin-bottom: 36px;
+        font-size: 15px; font-weight: 400; line-height: 1.6;
+        color: ${CONFIG.colors.textMuted}; margin: 0 0 36px;
       }
       .onboarding-dots {
-        display: flex; gap: 8px; margin-bottom: 32px;
+        display: flex; gap: 8px; margin-bottom: 14px;
       }
       .onboarding-dot {
         width: 6px; height: 6px; border-radius: 50%;
         background: ${CONFIG.colors.surfaceLight};
-        transition: background 0.2s;
+        transition: background 0.4s ease, transform 0.4s ease;
       }
       .onboarding-dot.active {
         background: ${CONFIG.colors.primary};
+        transform: scale(1.4);
+      }
+      .onboarding-progress {
+        font-size: 11px; color: ${CONFIG.colors.textDim};
+        letter-spacing: 0.5px; margin-bottom: 24px;
+        text-transform: uppercase;
       }
       .onboarding-continue-btn {
         width: 100%; padding: 16px;
@@ -148,15 +155,26 @@ export class OnboardingScreen {
         border: none; border-radius: 14px;
         color: #fff; font-size: 16px; font-weight: 500;
         letter-spacing: 0.3px; cursor: pointer;
-        transition: background 0.2s; margin-bottom: 12px;
+        transition: background 0.4s ease, transform 0.3s ease;
+        margin-bottom: 12px;
+        min-height: 52px;
       }
-      .onboarding-continue-btn:active { background: ${CONFIG.colors.primaryLight}; }
+      .onboarding-continue-btn:hover { background: ${CONFIG.colors.primaryLight}; }
+      .onboarding-continue-btn:active { background: ${CONFIG.colors.primaryLight}; transform: scale(0.99); }
+      .onboarding-continue-btn:focus-visible {
+        outline-color: ${CONFIG.colors.primaryLight};
+        outline-offset: 4px;
+      }
       .onboarding-skip-btn {
         background: none; border: none;
         color: ${CONFIG.colors.textMuted}; font-size: 14px;
         cursor: pointer; padding: 8px;
         min-height: 44px;
+        border-radius: 8px;
+        transition: color 0.4s ease;
       }
+      .onboarding-skip-btn:hover { color: ${CONFIG.colors.text}; }
+      .onboarding-skip-btn:focus-visible { outline-color: ${CONFIG.colors.primary}; }
     `;
     document.head.appendChild(style);
   }

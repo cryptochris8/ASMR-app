@@ -12,10 +12,12 @@ export class SplashScreen extends UIPanel {
   }
 
   protected render(): void {
+    this.element.setAttribute('role', 'status');
+    this.element.setAttribute('aria-label', 'Loading ASMR Sleep');
     this.element.innerHTML = `
       <div class="splash-content">
         <div class="splash-logo">
-          <div class="splash-icon">
+          <div class="splash-icon" aria-hidden="true">
             <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
               <circle cx="32" cy="32" r="28" stroke="${CONFIG.colors.primary}" stroke-width="2" opacity="0.6"/>
               <circle cx="32" cy="32" r="18" stroke="${CONFIG.colors.primaryLight}" stroke-width="1.5" opacity="0.4"/>
@@ -25,7 +27,7 @@ export class SplashScreen extends UIPanel {
           <h1 class="splash-title">ASMR Sleep</h1>
         </div>
         <p class="splash-tagline">Relax. Breathe. Sleep.</p>
-        <div class="splash-loader">
+        <div class="splash-loader" aria-hidden="true">
           <div class="splash-loader-bar"></div>
         </div>
       </div>
@@ -71,9 +73,10 @@ export class SplashScreen extends UIPanel {
       .splash-title {
         font-size: 28px; font-weight: 300; letter-spacing: 4px;
         color: ${CONFIG.colors.text}; text-transform: uppercase;
+        margin: 0;
       }
       .splash-tagline {
-        margin-top: 20px; font-size: 15px; font-weight: 300;
+        margin: 20px 0 0; font-size: 15px; font-weight: 400;
         color: ${CONFIG.colors.textMuted}; letter-spacing: 2px;
       }
       .splash-loader {

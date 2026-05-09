@@ -65,37 +65,37 @@ export class PaywallScreen extends UIPanel {
 
     this.element.innerHTML = `
       <div class="paywall-content">
-        <div class="paywall-hero">
+        <div class="paywall-hero" aria-hidden="true">
           <div class="paywall-glow"></div>
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" focusable="false">
             <circle cx="32" cy="32" r="28" stroke="${CONFIG.colors.premium}" stroke-width="2" opacity="0.6"/>
             <circle cx="32" cy="32" r="18" stroke="${CONFIG.colors.premiumGlow}" stroke-width="1.5" opacity="0.4"/>
             <circle cx="32" cy="32" r="8" fill="${CONFIG.colors.premium}" opacity="0.9"/>
           </svg>
         </div>
 
-        <h1 class="paywall-headline" id="paywall-title">Unlock the Full<br>Sleep Experience</h1>
-        <p class="paywall-subheadline">Premium scenes, better sleep tools, unlimited presets</p>
+        <h1 class="paywall-headline" id="paywall-title">Sleep deeper with<br>everything unlocked</h1>
+        <p class="paywall-subheadline">Every scene, every sound, no limits.</p>
 
-        <div class="paywall-trial-row">
+        <label class="paywall-trial-row">
           <span class="paywall-trial-label">Try free for 7 days</span>
-          <input type="checkbox" class="paywall-trial-toggle" checked aria-label="Enable 7-day free trial"/>
-        </div>
+          <input type="checkbox" role="switch" class="paywall-trial-toggle" checked aria-label="Enable 7-day free trial"/>
+        </label>
 
-        <div class="paywall-benefits">
-          <div class="paywall-benefit">All sound scenes & environments</div>
-          <div class="paywall-benefit">Premium ambient sound packs</div>
-          <div class="paywall-benefit">Unlimited sleep timer & presets</div>
-          <div class="paywall-benefit">Advanced sound mixer</div>
-          <div class="paywall-benefit">New content updates</div>
-        </div>
+        <ul class="paywall-benefits" aria-label="What you get with premium">
+          <li class="paywall-benefit">Every scene unlocked — fireplace, temple, apothecary, more</li>
+          <li class="paywall-benefit">Hand-crafted ambient music in select rooms</li>
+          <li class="paywall-benefit">Sleep timer with no time limit</li>
+          <li class="paywall-benefit">Save unlimited custom mixes</li>
+          <li class="paywall-benefit">New scenes added regularly</li>
+        </ul>
 
-        <div class="paywall-plans">
-          <button class="paywall-plan" data-plan="monthly">
+        <div class="paywall-plans" role="radiogroup" aria-label="Choose a subscription plan">
+          <button type="button" class="paywall-plan" data-plan="monthly" role="radio" aria-checked="false">
             <span class="plan-label">Monthly</span>
             <span class="plan-price">$${CONFIG.monthlyPrice}/mo</span>
           </button>
-          <button class="paywall-plan best-value" data-plan="yearly">
+          <button type="button" class="paywall-plan best-value" data-plan="yearly" role="radio" aria-checked="true">
             <span class="plan-badge plan-trial-badge">7-day free trial</span>
             <span class="plan-label">Yearly</span>
             <span class="plan-price">$${CONFIG.yearlyPrice}/yr</span>
@@ -103,12 +103,12 @@ export class PaywallScreen extends UIPanel {
           </button>
         </div>
 
-        <button class="paywall-cta">Start Premium</button>
-        <button class="paywall-skip">Continue Free</button>
+        <button type="button" class="paywall-cta">Start Premium</button>
+        <button type="button" class="paywall-skip">Continue Free</button>
 
         <div class="paywall-footer">
-          <button class="paywall-restore">Restore Purchases</button>
-          <span class="paywall-terms">Terms & Privacy</span>
+          <button type="button" class="paywall-restore">Restore Purchases</button>
+          <button type="button" class="paywall-terms">Terms &amp; Privacy</button>
         </div>
       </div>
     `;
@@ -129,8 +129,12 @@ export class PaywallScreen extends UIPanel {
 
     this.element.querySelectorAll('.paywall-plan').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.element.querySelectorAll('.paywall-plan').forEach(b => b.classList.remove('selected'));
+        this.element.querySelectorAll('.paywall-plan').forEach(b => {
+          b.classList.remove('selected');
+          b.setAttribute('aria-checked', 'false');
+        });
         btn.classList.add('selected');
+        btn.setAttribute('aria-checked', 'true');
         selectedPlan = btn.getAttribute('data-plan') as 'monthly' | 'yearly';
       });
     });
@@ -185,11 +189,11 @@ export class PaywallScreen extends UIPanel {
       .paywall-headline {
         font-size: 26px; font-weight: 400;
         color: ${CONFIG.colors.text}; line-height: 1.3;
-        margin-bottom: 10px;
+        margin: 0 0 10px;
       }
       .paywall-subheadline {
         font-size: 14px; color: ${CONFIG.colors.textMuted};
-        margin-bottom: 20px;
+        margin: 0 0 20px; line-height: 1.5;
       }
       .paywall-trial-row {
         display: flex; align-items: center; justify-content: center;
@@ -198,6 +202,8 @@ export class PaywallScreen extends UIPanel {
         background: ${CONFIG.colors.timerActive}12;
         border: 1px solid ${CONFIG.colors.timerActive}30;
         border-radius: 12px;
+        cursor: pointer;
+        min-height: 48px;
       }
       .paywall-trial-label {
         font-size: 15px; font-weight: 500;
@@ -208,7 +214,8 @@ export class PaywallScreen extends UIPanel {
         appearance: none; -webkit-appearance: none;
         background: ${CONFIG.colors.surfaceLight};
         border-radius: 12px; cursor: pointer;
-        position: relative; transition: background 0.2s;
+        position: relative;
+        transition: background 0.4s ease;
         flex-shrink: 0;
       }
       .paywall-trial-toggle::after {
@@ -216,7 +223,7 @@ export class PaywallScreen extends UIPanel {
         width: 20px; height: 20px; border-radius: 10px;
         background: ${CONFIG.colors.textMuted};
         top: 2px; left: 2px;
-        transition: transform 0.2s;
+        transition: transform 0.3s ease, background 0.4s ease;
       }
       .paywall-trial-toggle:checked {
         background: ${CONFIG.colors.timerActive};
@@ -225,12 +232,18 @@ export class PaywallScreen extends UIPanel {
         transform: translateX(20px);
         background: #fff;
       }
+      .paywall-trial-toggle:focus-visible {
+        outline-color: ${CONFIG.colors.timerActive};
+        outline-offset: 4px;
+      }
       .paywall-benefits {
-        text-align: left; margin-bottom: 28px;
+        text-align: left; margin: 0 0 28px; padding: 0;
+        list-style: none;
       }
       .paywall-benefit {
         font-size: 14px; color: ${CONFIG.colors.text};
         padding: 8px 0; padding-left: 20px; position: relative;
+        line-height: 1.4;
       }
       .paywall-benefit::before {
         content: ''; position: absolute; left: 0; top: 50%;
@@ -248,15 +261,24 @@ export class PaywallScreen extends UIPanel {
         border-radius: 14px; cursor: pointer;
         display: flex; flex-direction: column;
         align-items: center; gap: 4px;
-        position: relative; transition: border-color 0.2s;
+        position: relative;
+        transition: border-color 0.4s ease, background 0.4s ease, transform 0.3s ease;
+        min-height: 88px;
       }
+      .paywall-plan:hover { border-color: ${CONFIG.colors.premium}80; background: ${CONFIG.colors.surface}; }
+      .paywall-plan:active { transform: scale(0.98); }
       .paywall-plan.selected {
         border-color: ${CONFIG.colors.premium};
+        background: ${CONFIG.colors.premium}08;
+      }
+      .paywall-plan:focus-visible {
+        outline-color: ${CONFIG.colors.premium};
+        outline-offset: 4px;
       }
       .plan-badge {
         position: absolute; top: -10px;
         background: ${CONFIG.colors.premium};
-        color: #000; font-size: 10px; font-weight: 600;
+        color: #1a1208; font-size: 10px; font-weight: 600;
         padding: 3px 10px; border-radius: 8px;
         letter-spacing: 0.5px;
       }
@@ -269,32 +291,52 @@ export class PaywallScreen extends UIPanel {
       }
       .plan-price {
         font-size: 20px; color: ${CONFIG.colors.text}; font-weight: 500;
+        font-variant-numeric: tabular-nums;
       }
       .plan-savings {
         font-size: 11px; color: ${CONFIG.colors.premium}; font-weight: 500;
+        letter-spacing: 0.3px;
       }
       .paywall-cta {
         width: 100%; padding: 16px;
         background: ${CONFIG.colors.premium};
         border: none; border-radius: 14px;
-        color: #000; font-size: 16px; font-weight: 600;
+        color: #1a1208; font-size: 16px; font-weight: 600;
         cursor: pointer; margin-bottom: 12px;
         letter-spacing: 0.3px;
+        transition: background 0.4s ease, transform 0.3s ease;
+        min-height: 52px;
+      }
+      .paywall-cta:hover { background: ${CONFIG.colors.premiumGlow}; }
+      .paywall-cta:active { transform: scale(0.99); }
+      .paywall-cta:focus-visible {
+        outline-color: ${CONFIG.colors.premiumGlow};
+        outline-offset: 4px;
       }
       .paywall-skip {
         background: none; border: none;
         color: ${CONFIG.colors.textMuted}; font-size: 14px;
         cursor: pointer; padding: 10px;
         margin-bottom: 20px;
+        border-radius: 8px;
+        min-height: 44px;
+        transition: color 0.4s ease;
       }
+      .paywall-skip:hover { color: ${CONFIG.colors.text}; }
+      .paywall-skip:focus-visible { outline-color: ${CONFIG.colors.primary}; }
       .paywall-footer {
         display: flex; justify-content: center; gap: 20px;
       }
       .paywall-restore, .paywall-terms {
         background: none; border: none;
         color: ${CONFIG.colors.textDim}; font-size: 12px;
-        cursor: pointer;
+        cursor: pointer; padding: 8px;
+        border-radius: 6px;
+        min-height: 32px;
+        transition: color 0.4s ease;
       }
+      .paywall-restore:hover, .paywall-terms:hover { color: ${CONFIG.colors.textMuted}; }
+      .paywall-restore:focus-visible, .paywall-terms:focus-visible { outline-color: ${CONFIG.colors.primary}; outline-offset: 2px; }
     `;
     document.head.appendChild(style);
   }
