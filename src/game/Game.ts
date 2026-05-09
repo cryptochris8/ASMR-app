@@ -295,6 +295,13 @@ export class Game {
     };
   }
 
+  private hitTestActive(x: number, y: number) {
+    const scene = this.sceneController.current();
+    if (!scene) return null;
+    const { ndcX, ndcY } = this.screenToNDC(x, y);
+    return scene.hitTest(new THREE.Vector2(ndcX, ndcY));
+  }
+
   private setupInput(): void {
     const surface = this.interactionAudio.getSceneSurface();
     const activeScene = this.store.state.activeScene;
@@ -305,7 +312,26 @@ export class Game {
       onTap: (x, y) => {
         this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
-        this.interactionAudio.playTap(surface);
+
+        // Hotspot scenes: require a hit and use the hotspot's surface.
+        // Outside any hotspot = silent.
+        let tapSurface = surface;
+        if (activeScene === 'cozy-room') {
+          const hit = this.hitTestActive(x, y);
+          if (!hit?.surface) {
+            this.store.update({ isInteracting: true, interactionType: 'tap' });
+            setTimeout(() => this.store.update({ isInteracting: false, interactionType: 'none' }), CONFIG.tapFeedbackDuration);
+            return;
+          }
+          tapSurface = hit.surface as typeof surface;
+        }
+        this.interactionAudio.playTap(tapSurface);
+
+        // Sticky speaker: tap-to-toggle Moonlight
+        if (activeScene === 'cozy-room' && tapSurface === 'speaker') {
+          const crs = this.sceneController.current() as CozyRoomScene | null;
+          crs?.toggleSpeakerMusic();
+        }
 
         if (activeScene === 'rain-window') {
           const rws = this.sceneController.current() as RainWindowScene | null;
@@ -330,11 +356,6 @@ export class Game {
         this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
         this.interactionAudio.startDrag(surface);
-
-        if (activeScene === 'cozy-room') {
-          const crs = this.sceneController.current() as CozyRoomScene | null;
-          crs?.setDragging(true);
-        }
 
         if (activeScene === 'rain-window') {
           const rws = this.sceneController.current() as RainWindowScene | null;
@@ -391,11 +412,6 @@ export class Game {
       onDragEnd: () => {
         this.interactionAudio.stopDrag();
 
-        if (activeScene === 'cozy-room') {
-          const crs = this.sceneController.current() as CozyRoomScene | null;
-          crs?.setDragging(false);
-        }
-
         if (activeScene === 'rain-window') {
           const rws = this.sceneController.current() as RainWindowScene | null;
           rws?.endTrail();
@@ -409,10 +425,17 @@ export class Game {
         this.store.update({ isInteracting: false, interactionType: 'none' });
       },
 
-      onHoldStart: (_x, _y) => {
+      onHoldStart: (x, y) => {
         this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
-        this.interactionAudio.startHold(surface);
+
+        let holdSurface = surface;
+        if (activeScene === 'cozy-room') {
+          const hit = this.hitTestActive(x, y);
+          if (!hit?.surface) return;
+          holdSurface = hit.surface as typeof surface;
+        }
+        this.interactionAudio.startHold(holdSurface);
 
         if (this.store.state.hapticsEnabled) {
           this.hapticsSystem.holdFeedback();

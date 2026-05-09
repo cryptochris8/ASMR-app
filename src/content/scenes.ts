@@ -34,8 +34,8 @@ export const SCENES: SceneDef[] = [
     description: 'Warm fireplace crackle with soft fabric and wood sounds',
     moodLabel: 'Warm & Cozy',
     premium: true,
-    skybox: 'cozy-rain',
-    skyboxRotationY: Math.PI * 0.35, // face the fireplace
+    skybox: 'cozy-room',
+    skyboxRotationY: Math.PI, // adjust after previewing the new skybox
     ambientSoundPack: 'fireplace',
     interactionSounds: ['fire_crackle_01', 'wood_creak_01', 'fabric_brush_01'],
     bgColor: 0x120e08,

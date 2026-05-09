@@ -377,6 +377,160 @@
       "prompt": "subtle wooden temple post creak, very short soft groan of old beam, close-mic ASMR, no music",
       "duration_seconds": 1.5,
       "prompt_influence": 0.8
+    },
+
+    {
+      "id": "cozy_room_loop_v2_01",
+      "pack": "cozy-room-v2",
+      "file": "ambient/cozy-room-v2-loop-01.wav",
+      "prompt": "warm cozy living room ambience at night, very distant fire crackle baseline, subtle wood creaks, soft amber lamp atmosphere, intimate calm space, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "fire_pop_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/fireplace/fire-pop-01.wav",
+      "prompt": "single dry fireplace pop and crackle, sharp short woody snap, close-mic ASMR, no music",
+      "duration_seconds": 1.2,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "fire_pop_02",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/fireplace/fire-pop-02.wav",
+      "prompt": "short crisp ember pop in a fireplace, brief warm crackle, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "fire_pop_03",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/fireplace/fire-pop-03.wav",
+      "prompt": "single sharp wood snap in burning fireplace, very short bright crackle, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "fire_hold_loop_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/hold/fireplace/fire-hold-loop-01.wav",
+      "prompt": "warm fireplace burning continuously with steady soft crackle and occasional pops, intimate cozy fire close-mic ASMR, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "vinyl_click_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/speaker/vinyl-click-01.wav",
+      "prompt": "single vinyl record needle drop click followed by very brief warm static, short, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "vinyl_click_02",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/speaker/vinyl-click-02.wav",
+      "prompt": "soft vinyl pop and brief crackle as needle settles on a record, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "vinyl_crackle_loop_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/hold/speaker/vinyl-crackle-loop-01.wav",
+      "prompt": "warm vinyl record surface noise, continuous gentle crackle and hiss, no melody, no instruments, no music, no voice, intimate close-mic ASMR",
+      "duration_seconds": 10,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "page_rustle_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/bookshelf/page-rustle-01.wav",
+      "prompt": "single soft turning of a paper book page, brief gentle rustle, close-mic ASMR, no music",
+      "duration_seconds": 0.9,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "page_rustle_02",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/bookshelf/page-rustle-02.wav",
+      "prompt": "fingertip flicking edge of book pages, very short crisp paper sound, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "page_rustle_03",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/bookshelf/page-rustle-03.wav",
+      "prompt": "old leather-bound book opening softly, brief paper rustle, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "pages_hold_loop_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/hold/bookshelf/pages-hold-loop-01.wav",
+      "prompt": "slow continuous turning of paper book pages, gentle steady paper rustle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "leather_creak_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/armchair/leather-creak-01.wav",
+      "prompt": "tiny soft squeak of leather cushion, very brief and high-pitched, gentle, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "leather_creak_02",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/armchair/leather-creak-02.wav",
+      "prompt": "small light leather squeak, subtle and quiet, brief and high, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "leather_creak_03",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/armchair/leather-creak-03.wav",
+      "prompt": "soft brief leather creak, subtle gentle squeak, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "fabric_brush_hold_loop_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/hold/armchair/fabric-brush-hold-loop-01.wav",
+      "prompt": "soft continuous fingertip brushing across thick wool blanket, slow steady muffled friction, intimate close-mic ASMR, no music, no voice",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "wood_lid_clack_01",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/pot/wood-lid-clack-01.wav",
+      "prompt": "wooden pot lid being lifted and set down softly on wooden vessel, brief warm clack, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "wood_lid_clack_02",
+      "pack": "cozy-room-v2",
+      "file": "interactions/tap/pot/wood-lid-clack-02.wav",
+      "prompt": "single soft tap of wooden lid against a wooden pot rim, very short hollow thock, close-mic ASMR, no music",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.8
     }
   ]
 }

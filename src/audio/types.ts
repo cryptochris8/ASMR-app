@@ -15,8 +15,12 @@ export interface AssetStatus {
   schema_version?: number;
 }
 
-/** Surface types that define the emotional character of interactions */
-export type SurfaceType = 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic';
+/** Surface types that define the emotional character of interactions.
+ *  Includes both raw materials (glass, wood, fabric, sand, ceramic) and
+ *  named hotspot identifiers used by skybox-with-hotspots scenes. */
+export type SurfaceType =
+  | 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic'
+  | 'fireplace' | 'speaker' | 'bookshelf' | 'armchair' | 'pot';
 
 /** Interaction sound categories */
 export type InteractionCategory = 'tap' | 'drag' | 'hold';

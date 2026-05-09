@@ -1,39 +1,45 @@
 import * as THREE from 'three';
 import { IScene, SceneInitParams, HitResult } from './IScene';
+import { getScene } from '../content/scenes';
+import { getHotspots } from '../content/hotspots';
+import { resolveHotspot } from './hotspotResolver';
+import { SceneId } from '../game/state';
 
+/**
+ * Skybox + hotspots scene. The skybox is the visual; tappable regions
+ * are defined by angular hotspot configs in `content/hotspots.ts`.
+ * Outside any hotspot, taps produce no sound.
+ */
 export class CozyRoomScene implements IScene {
-  readonly id = 'cozy-room';
+  readonly id: SceneId = 'cozy-room';
   readonly group: THREE.Group;
 
-  private interactionPlane: THREE.Mesh;
-  private warmLight: THREE.PointLight;
-  private flickerTime = 0;
   private raycaster = new THREE.Raycaster();
   private _ndc = new THREE.Vector2();
   private _camera: THREE.Camera | null = null;
-  private _isDragging = false;
+
+  // Sticky speaker music — tap-to-toggle, persists across other interactions
+  private moonlight: HTMLAudioElement | null = null;
+  private moonlightPlaying = false;
 
   constructor() {
     this.group = new THREE.Group();
+    this.moonlight = new Audio('/audio/music/moonlight-loop.wav');
+    this.moonlight.loop = true;
+    this.moonlight.preload = 'auto';
+  }
 
-    // Flickering warm point light (fireplace)
-    this.warmLight = new THREE.PointLight(0xffb070, 1.2, 8);
-    this.warmLight.position.set(0, -0.5, 1);
-    this.group.add(this.warmLight);
-
-    // Near-invisible interaction plane slightly right of center
-    const planeGeo = new THREE.PlaneGeometry(2.0, 3.0);
-    const planeMat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.04,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    this.interactionPlane = new THREE.Mesh(planeGeo, planeMat);
-    this.interactionPlane.position.set(0.3, 0.5, 1.0);
-    this.interactionPlane.name = 'cozy-interaction';
-    this.group.add(this.interactionPlane);
+  toggleSpeakerMusic(): boolean {
+    if (!this.moonlight) return false;
+    if (this.moonlightPlaying) {
+      this.moonlight.pause();
+      this.moonlight.currentTime = 0;
+      this.moonlightPlaying = false;
+    } else {
+      this.moonlight.play().catch(() => {});
+      this.moonlightPlaying = true;
+    }
+    return this.moonlightPlaying;
   }
 
   init({ scene, camera }: SceneInitParams): Promise<void> {
@@ -43,7 +49,7 @@ export class CozyRoomScene implements IScene {
     return new Promise((resolve) => {
       const loader = new THREE.TextureLoader();
       loader.load(
-        '/skybox/cozy-rain.jpg',
+        '/skybox/cozy-room.jpg',
         (texture) => {
           texture.mapping = THREE.EquirectangularReflectionMapping;
           texture.colorSpace = THREE.SRGBColorSpace;
@@ -65,36 +71,29 @@ export class CozyRoomScene implements IScene {
     });
   }
 
-  update(dt: number): void {
-    this.flickerTime += dt;
-    // Sine wave + pseudo-noise for flicker
-    const noise =
-      Math.sin(this.flickerTime * 7.3) * 0.04 +
-      Math.sin(this.flickerTime * 13.7) * 0.025 +
-      Math.sin(this.flickerTime * 2.1) * 0.06;
-    this.warmLight.intensity = 1.2 + noise;
+  update(_dt: number): void {
+    // Static skybox — no per-frame work
   }
 
   hitTest(ndc: THREE.Vector2): HitResult | null {
     if (!this._camera) return null;
     this._ndc.set(ndc.x, ndc.y);
     this.raycaster.setFromCamera(this._ndc, this._camera);
-    const hits = this.raycaster.intersectObject(this.interactionPlane);
-    if (hits.length === 0) return null;
-    return {
-      uv: hits[0].uv ? new THREE.Vector2(hits[0].uv.x, hits[0].uv.y) : undefined,
-      surface: this._isDragging ? 'fabric' : 'wood',
-    };
-  }
 
-  setDragging(value: boolean): void {
-    this._isDragging = value;
+    const sceneDef = getScene(this.id);
+    const skyboxRotationY = sceneDef?.skyboxRotationY ?? 0;
+    const hit = resolveHotspot(this.raycaster.ray.direction, skyboxRotationY, getHotspots(this.id));
+    if (!hit) return null;
+    return { surface: hit.surface };
   }
 
   dispose(): void {
-    this.interactionPlane.geometry.dispose();
-    (this.interactionPlane.material as THREE.Material).dispose();
-    this.group.remove(this.warmLight);
+    if (this.moonlight) {
+      this.moonlight.pause();
+      this.moonlight.src = '';
+      this.moonlight = null;
+    }
+    this.moonlightPlaying = false;
     this.group.parent?.remove(this.group);
   }
 }

@@ -8,7 +8,7 @@ export const CONFIG = {
   directionalLightPosition: [2, 5, 3] as [number, number, number],
 
   // Camera
-  cameraFov: 55,
+  cameraFov: 80,
   cameraPosition: [0, 2, 5] as [number, number, number],
   cameraLookAt: [0, 0.5, 0] as [number, number, number],
 

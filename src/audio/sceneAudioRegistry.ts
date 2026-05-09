@@ -80,66 +80,89 @@ export const SCENE_AUDIO_REGISTRY: SceneAudioDef[] = [
   },
 
   // ============================================
-  // COZY ROOM SCENE
+  // COZY ROOM SCENE — hotspot-driven (skybox + 5 hotspots)
   // ============================================
   {
     sceneId: 'cozy-room',
 
     baseAmbience: [
       {
-        id: 'fireplace_room_loop_01', file: 'ambient/fireplace-room-loop-01.wav',
+        id: 'cozy_room_loop_v2_01', file: 'ambient/cozy-room-v2-loop-01.wav',
         isPlaceholder: false, needsReplacement: false, isPremium: true,
         interactionCategory: 'ambient',
-        recommendedUse: 'Primary cozy room ambience — file not yet present',
+        recommendedUse: 'Warm cozy room base loop with very distant fire baseline',
       },
     ],
 
     taps: [
       {
-        surface: 'wood',
+        surface: 'fireplace',
         sounds: [
-          { id: 'wood_tap_01', file: 'interactions/tap/wood/wood-tap-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'wood_tap_02', file: 'interactions/tap/wood/wood-tap-02.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'wood_tap_03', file: 'interactions/tap/wood/wood-tap-03.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'wood_tap_04', file: 'interactions/tap/wood/wood-tap-04.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'wood_tap_05', file: 'interactions/tap/wood/wood-tap-05.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'wood_tap_06', file: 'interactions/tap/wood/wood-tap-06.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+          { id: 'fire_pop_01', file: 'interactions/tap/fireplace/fire-pop-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'fire_pop_02', file: 'interactions/tap/fireplace/fire-pop-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'fire_pop_03', file: 'interactions/tap/fireplace/fire-pop-03.wav', isPremium: true, interactionCategory: 'tap' },
         ],
       },
       {
-        surface: 'ceramic',
+        surface: 'speaker',
         sounds: [
-          { id: 'ceramic_click_01', file: 'interactions/tap/ceramic/ceramic-click-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'ceramic_click_02', file: 'interactions/tap/ceramic/ceramic-click-02.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'ceramic_click_03', file: 'interactions/tap/ceramic/ceramic-click-03.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
-          { id: 'ceramic_click_04', file: 'interactions/tap/ceramic/ceramic-click-04.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'tap' },
+          { id: 'vinyl_click_01', file: 'interactions/tap/speaker/vinyl-click-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'vinyl_click_02', file: 'interactions/tap/speaker/vinyl-click-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'bookshelf',
+        sounds: [
+          { id: 'page_rustle_01', file: 'interactions/tap/bookshelf/page-rustle-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'page_rustle_02', file: 'interactions/tap/bookshelf/page-rustle-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'page_rustle_03', file: 'interactions/tap/bookshelf/page-rustle-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'armchair',
+        sounds: [
+          { id: 'leather_creak_01', file: 'interactions/tap/armchair/leather-creak-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'leather_creak_02', file: 'interactions/tap/armchair/leather-creak-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'leather_creak_03', file: 'interactions/tap/armchair/leather-creak-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'pot',
+        sounds: [
+          { id: 'wood_lid_clack_01', file: 'interactions/tap/pot/wood-lid-clack-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'wood_lid_clack_02', file: 'interactions/tap/pot/wood-lid-clack-02.wav', isPremium: true, interactionCategory: 'tap' },
         ],
       },
     ],
 
-    drags: [
-      {
-        surface: 'fabric',
-        loops: [
-          { id: 'fabric_brush_loop_01', file: 'interactions/drag/fabric/fabric-brush-loop-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'drag' },
-          { id: 'blanket_drag_loop_01', file: 'interactions/drag/fabric/blanket-drag-loop-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'drag' },
-        ],
-      },
-    ],
+    drags: [],
 
     holds: [
       {
-        surface: 'fabric',
+        surface: 'fireplace',
         loops: [
-          { id: 'warm_tone_hold_01', file: 'interactions/hold/warm-tone-hold-01.wav', isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'hold' },
+          { id: 'fire_hold_loop_01', file: 'interactions/hold/fireplace/fire-hold-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      // Speaker is sticky tap-to-toggle (handled in CozyRoomScene), not a normal hold
+      {
+        surface: 'bookshelf',
+        loops: [
+          { id: 'pages_hold_loop_01', file: 'interactions/hold/bookshelf/pages-hold-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'armchair',
+        loops: [
+          { id: 'fabric_brush_hold_loop_01', file: 'interactions/hold/armchair/fabric-brush-hold-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
         ],
       },
     ],
 
     ambientOneShots: [
-      { id: 'fireplace_pop_01', file: 'one_shots/fireplace/fireplace-pop-01.wav', minIntervalMs: 10000, maxVolume: 0.35, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
-      { id: 'chair_creak_01', file: 'one_shots/fireplace/chair-creak-01.wav', minIntervalMs: 18000, maxVolume: 0.2, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
-      { id: 'room_settle_01', file: 'one_shots/fireplace/room-settle-01.wav', minIntervalMs: 25000, maxVolume: 0.15, isPlaceholder: false, needsReplacement: false, isPremium: true, interactionCategory: 'one-shot' },
+      // Subtle background life between hotspot interactions
+      { id: 'chair_creak_01', file: 'one_shots/fireplace/chair-creak-01.wav', minIntervalMs: 22000, maxVolume: 0.18, isPremium: true, interactionCategory: 'one-shot' },
+      { id: 'room_settle_01', file: 'one_shots/fireplace/room-settle-01.wav', minIntervalMs: 30000, maxVolume: 0.12, isPremium: true, interactionCategory: 'one-shot' },
     ],
   },
 
