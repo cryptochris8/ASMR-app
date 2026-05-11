@@ -21,7 +21,8 @@ export interface AssetStatus {
 export type SurfaceType =
   | 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic'
   | 'fireplace' | 'speaker' | 'bookshelf' | 'armchair' | 'pot'
-  | 'jars' | 'spellbook' | 'candles' | 'herbs' | 'scale' | 'mortar';
+  | 'jars' | 'spellbook' | 'candles' | 'herbs' | 'scale' | 'mortar'
+  | 'lamp' | 'gauge' | 'window' | 'workbench' | 'clock-left' | 'clock-right';
 
 /** Interaction sound categories */
 export type InteractionCategory = 'tap' | 'drag' | 'hold';

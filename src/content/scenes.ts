@@ -8,6 +8,7 @@ export interface SceneDef {
   premium: boolean;
   skybox: string;
   skyboxRotationY: number; // radians — which direction the camera faces in the panorama
+  fov?: number; // optional per-scene FOV override (degrees); falls back to CONFIG.cameraFov
   ambientSoundPack: string;
   interactionSounds: string[];
   bgColor: number;
@@ -79,6 +80,20 @@ export const SCENES: SceneDef[] = [
     interactionSounds: [],
     bgColor: 0x140a04,
     thumbnailColor: 0xcc7733,
+  },
+  {
+    id: 'clockmaker-workshop',
+    name: "Clockmaker's Workshop",
+    description: 'Dozens of pendulum clocks ticking in soft asynchrony around a workbench of brass gears',
+    moodLabel: 'Steady & Soothing',
+    premium: true,
+    skybox: 'clockmakersworkshop',
+    skyboxRotationY: Math.PI * 0.55, // ~99° — face the window with the forest view
+    fov: 90, // wider lens to fit both clock faces + pendulums + lamp in frame
+    ambientSoundPack: 'tone',
+    interactionSounds: [],
+    bgColor: 0x0e0a08,
+    thumbnailColor: 0x8a6a3a,
   },
 ];
 

@@ -100,6 +100,7 @@ export class SettingsScreen extends UIPanel {
           <button type="button" class="settings-link-btn" disabled aria-disabled="true">Terms of Service<span class="settings-link-soon">Coming soon</span></button>
           <button type="button" class="settings-link-btn" disabled aria-disabled="true">Contact Support<span class="settings-link-soon">Coming soon</span></button>
           <button type="button" class="settings-replay-onboarding-btn">Replay Introduction</button>
+          <button type="button" class="settings-replay-hints-btn">Replay Scene Hints</button>
         </section>
       </div>
     `;
@@ -131,6 +132,10 @@ export class SettingsScreen extends UIPanel {
       (this.store.state as any).onboardingComplete = false;
       this.store.update({ onboardingComplete: false });
       window.location.reload();
+    });
+
+    this.element.querySelector('.settings-replay-hints-btn')?.addEventListener('click', () => {
+      this.store.update({ hotspotsSeenScenes: [] });
     });
   }
 
@@ -266,7 +271,8 @@ export class SettingsScreen extends UIPanel {
         padding: 3px 8px; border-radius: 8px;
         letter-spacing: 0.3px; font-weight: 500;
       }
-      .settings-replay-onboarding-btn {
+      .settings-replay-onboarding-btn,
+      .settings-replay-hints-btn {
         display: block; width: 100%;
         padding: 14px 0; text-align: left;
         background: none; border: none;
@@ -275,8 +281,10 @@ export class SettingsScreen extends UIPanel {
         min-height: 44px;
         transition: color 0.4s ease;
       }
-      .settings-replay-onboarding-btn:hover { color: ${CONFIG.colors.text}; }
-      .settings-replay-onboarding-btn:focus-visible { outline-color: ${CONFIG.colors.primary}; }
+      .settings-replay-onboarding-btn:hover,
+      .settings-replay-hints-btn:hover { color: ${CONFIG.colors.text}; }
+      .settings-replay-onboarding-btn:focus-visible,
+      .settings-replay-hints-btn:focus-visible { outline-color: ${CONFIG.colors.primary}; }
     `;
     document.head.appendChild(style);
   }

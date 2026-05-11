@@ -12,7 +12,7 @@ Five prompt-ready atmospheres for Blockade Labs Skybox AI. Each is deliberately 
 ## Status
 
 - [ ] 1. Vintage train compartment — `train-compartment.jpg`
-- [ ] 2. Antique clockmaker's workshop — `clockmaker-workshop.jpg`
+- [x] 2. Antique clockmaker's workshop — `clockmakersworkshop.jpg` *(complete: 6 hotspots + 16 ElevenLabs assets including the asynchronous-ticks ambient bed; no music — ticks are the rhythm)*
 - [x] 3. Mystical apothecary shop — `apothecary-shop.jpg` *(complete: 6 hotspots + 20 ElevenLabs assets + Gymnopédie harp music)*
 - [ ] 4. Japanese onsen bathhouse — `onsen-bath.jpg`
 - [ ] 5. Old lighthouse lamp room — `lighthouse-lamp.jpg`
@@ -142,3 +142,8 @@ Five prompt-ready atmospheres for Blockade Labs Skybox AI. Each is deliberately 
 - **Camera framing matters**: prompts ask for "intimate close perspective" because Blockade tends to default to wider shots that make foreground objects too small.
 - **Skybox AI sometimes ignores object lists** — if it gives you a beautiful room missing key items, paraphrase and regenerate (e.g., "make sure the brass spyglass on a tripod is clearly visible in the foreground").
 - **Negative text is forgiving** — repeat key avoidances ("no people, no text") in both the main prompt and the negative text field for stronger effect.
+
+
+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
+
+36be3042-8b2f-429e-83e4-5a906f230946a20a6692-c497-4b8b-8c8b-79e2a70b361d

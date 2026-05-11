@@ -702,6 +702,143 @@
       "prompt": "slow continuous grinding of dried herbs in a stone mortar with stone pestle, gentle steady scrape and crush, close-mic ASMR, no music, no voice",
       "duration_seconds": 8,
       "prompt_influence": 0.5
+    },
+
+    {
+      "id": "clocks_async_loop_01",
+      "pack": "clockmaker-workshop",
+      "file": "ambient/clocks-async-loop-01.wav",
+      "prompt": "warm cozy clockmaker workshop ambience, dozens of pendulum wall clocks softly ticking out of sync, gentle layered tick-tock texture at varying tempos, intimate close-mic ASMR, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "lamp_glass_tink_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/lamp/lamp-glass-tink-01.wav",
+      "prompt": "single soft fingertip tap on green oil lamp glass globe, brief delicate tink, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "lamp_glass_tink_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/lamp/lamp-glass-tink-02.wav",
+      "prompt": "fingernail tick on antique brass lamp body, very short bright metallic clink, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "lamp_flame_hiss_loop_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/hold/lamp/lamp-flame-hiss-loop-01.wav",
+      "prompt": "very soft continuous oil lamp flame hiss, gentle breath of fire inside glass globe, intimate close-mic ASMR, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "gauge_tick_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/gauge/gauge-tick-01.wav",
+      "prompt": "single tiny tap on antique brass barometer face, very short delicate metallic tick, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "gauge_tick_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/gauge/gauge-tick-02.wav",
+      "prompt": "soft fingernail click on glass face of an antique gauge, very brief bright tink, close-mic ASMR, no music",
+      "duration_seconds": 0.5,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "window_breeze_rustle_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/window/window-breeze-rustle-01.wav",
+      "prompt": "single soft brief gust of pine forest breeze rustling distant leaves outside an open window, very short, close-mic ASMR, no music, no voice",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "window_breeze_rustle_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/window/window-breeze-rustle-02.wav",
+      "prompt": "brief gentle wind through pine branches outside a window at dusk, short soft rustle, close-mic ASMR, no music, no voice",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.8
+    },
+
+    {
+      "id": "window_pine_wind_loop_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/hold/window/window-pine-wind-loop-01.wav",
+      "prompt": "continuous distant pine forest wind heard through an open window at dusk, gentle steady breeze with soft leaf rustle, calm and meditative, no music, no voice",
+      "duration_seconds": 10,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "workbench_tap_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/workbench/workbench-tap-01.wav",
+      "prompt": "single soft fingertip tap on aged wooden clockmaker workbench, brief warm hollow thock, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "workbench_tap_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/workbench/workbench-tap-02.wav",
+      "prompt": "gentle knuckle tap on dark walnut workbench, very short low warm tick, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "workbench_tap_03",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/workbench/workbench-tap-03.wav",
+      "prompt": "soft tap on aged wooden desk surface, brief muted thump, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "clock_chime_left_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/clock-left/clock-chime-left-01.wav",
+      "prompt": "single soft warm chime of an antique mantel clock striking once, brief gentle bell tone with short natural decay, close-mic ASMR, no music, no voice",
+      "duration_seconds": 1.5,
+      "prompt_influence": 0.8
+    },
+    {
+      "id": "clock_chime_left_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/clock-left/clock-chime-left-02.wav",
+      "prompt": "delicate single ding of small brass clock bell, very short soft warm tone, close-mic ASMR, no music, no voice",
+      "duration_seconds": 1.2,
+      "prompt_influence": 0.8
+    },
+
+    {
+      "id": "clock_tick_right_01",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/clock-right/clock-tick-right-01.wav",
+      "prompt": "single deep slow grandfather clock tick, brief low resonant wooden tock, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "clock_tick_right_02",
+      "pack": "clockmaker-workshop",
+      "file": "interactions/tap/clock-right/clock-tick-right-02.wav",
+      "prompt": "single deep mechanical grandfather clock tock, brief warm low thunk, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
     }
   ]
 }

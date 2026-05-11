@@ -1,4 +1,4 @@
-export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table' | 'temple-zen' | 'apothecary-shop';
+export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table' | 'temple-zen' | 'apothecary-shop' | 'clockmaker-workshop';
 export type SoundPackId = string;
 export type SubscriptionTier = 'free' | 'premium';
 
@@ -71,6 +71,9 @@ export interface AppState {
 
   // Warm-amber night-overlay preference
   warmScreenTintEnabled: boolean;
+
+  // Scenes that have already had their hotspot intro hint shown
+  hotspotsSeenScenes: SceneId[];
 }
 
 export function createInitialState(): AppState {
@@ -94,8 +97,10 @@ export function createInitialState(): AppState {
     isInteracting: false,
     interactionType: 'none',
 
-    subscriptionTier: 'free',
-    subscriptionExpiresAt: 0,
+    // TEMP DEV OVERRIDE — premium-by-default for mobile testing.
+    // Revert to 'free' / 0 before launch.
+    subscriptionTier: 'premium',
+    subscriptionExpiresAt: Date.now() + 365 * 24 * 60 * 60_000,
 
     hapticsEnabled: true,
     dimScreenPreference: false,
@@ -115,6 +120,8 @@ export function createInitialState(): AppState {
 
     sleepModeRequested: false,
     warmScreenTintEnabled: false,
+
+    hotspotsSeenScenes: [],
   };
 }
 

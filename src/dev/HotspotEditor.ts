@@ -29,10 +29,12 @@ export class HotspotEditor {
 
   enable(): void {
     if (this.active) return;
-    this.canvas.addEventListener('pointerdown', this.bound, true);
+    // Listen at the document level so HUD overlays (mute/timer/mixer buttons)
+    // can't swallow taps on parts of the panorama covered by UI.
+    document.addEventListener('pointerdown', this.bound, true);
     this.active = true;
     console.log(
-      '%c[HotspotEditor] ON%c — tap the canvas to log a hotspot snippet. Call __hotspotEditor.disable() to stop.',
+      '%c[HotspotEditor] ON%c — tap anywhere to log a hotspot snippet. Call __hotspotEditor.disable() to stop.',
       'color: #000; background: #ffd700; font-weight: bold; padding: 2px 6px;',
       'color: inherit;',
     );
@@ -40,7 +42,7 @@ export class HotspotEditor {
 
   disable(): void {
     if (!this.active) return;
-    this.canvas.removeEventListener('pointerdown', this.bound, true);
+    document.removeEventListener('pointerdown', this.bound, true);
     this.active = false;
     console.log('[HotspotEditor] off');
   }

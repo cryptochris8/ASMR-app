@@ -34,6 +34,14 @@ export const SCENE_HOTSPOTS: Partial<Record<SceneId, HotspotDef[]>> = {
     { id: 'scale',     yawDeg:  74.05, pitchDeg: -18.18, radiusDeg: 10, surface: 'scale',     label: 'Brass scale' },
     { id: 'mortar',    yawDeg: -41.84, pitchDeg: -34.80, radiusDeg: 10, surface: 'mortar',    label: 'Mortar' },
   ],
+  'clockmaker-workshop': [
+    { id: 'lamp',        yawDeg: -165.50, pitchDeg: -18.60, radiusDeg: 14, surface: 'lamp',        label: 'Green oil lamp' },
+    { id: 'gauge',       yawDeg: -138.88, pitchDeg:  17.82, radiusDeg: 10, surface: 'gauge',       label: 'Brass gauge' },
+    { id: 'window',      yawDeg:  -89.19, pitchDeg:  14.90, radiusDeg: 14, surface: 'window',      label: 'Forest window' },
+    { id: 'workbench',   yawDeg: -114.83, pitchDeg: -36.59, radiusDeg: 12, surface: 'workbench',   label: 'Workbench' },
+    { id: 'clock-left',  yawDeg:  -38.88, pitchDeg:  13.19, radiusDeg: 10, surface: 'clock-left',  label: 'Mantel clock' },
+    { id: 'clock-right', yawDeg:  -29.40, pitchDeg:  -6.81, radiusDeg: 10, surface: 'clock-right', label: 'Grandfather clock' },
+  ],
 };
 
 export function getHotspots(sceneId: SceneId): HotspotDef[] {

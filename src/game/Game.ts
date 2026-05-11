@@ -20,10 +20,13 @@ import { CozyRoomScene } from '../scenes/CozyRoomScene';
 import { SandTableScene } from '../scenes/SandTableScene';
 import { TempleZenScene } from '../scenes/TempleZenScene';
 import { ApothecaryShopScene } from '../scenes/ApothecaryShopScene';
+import { ClockmakerWorkshopScene } from '../scenes/ClockmakerWorkshopScene';
 import { HotspotEditor } from '../dev/HotspotEditor';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
 import { sceneLoadingOverlay } from '../ui/SceneLoadingOverlay';
+import { hotspotHint } from '../ui/HotspotHint';
+import { getHotspots } from '../content/hotspots';
 import { SplashScreen } from '../ui/splash';
 import { HomeScreen } from '../ui/home';
 import { PlayerHUD } from '../ui/player';
@@ -91,6 +94,7 @@ export class Game {
     this.sceneController.register('sand-table', () => new SandTableScene());
     this.sceneController.register('temple-zen', () => new TempleZenScene());
     this.sceneController.register('apothecary-shop', () => new ApothecaryShopScene());
+    this.sceneController.register('clockmaker-workshop', () => new ClockmakerWorkshopScene());
 
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);
@@ -178,6 +182,40 @@ export class Game {
       editor.enable();
       (window as any).__hotspotEditor = editor;
     }
+
+    // Dev helper: toggle premium subscription for testing.
+    // Usage in console: __setPremium(true)  or  __setPremium(false)
+    (window as any).__setPremium = (on: boolean) => {
+      this.store.update({
+        subscriptionTier: on ? 'premium' : 'free',
+        subscriptionExpiresAt: on ? Date.now() + 365 * 24 * 60 * 60_000 : 0,
+      });
+      console.log(`%c[premium] ${on ? 'ON' : 'OFF'} — reload to refresh home screen`,
+        'color: #000; background: #c9a84c; font-weight: bold; padding: 2px 6px;');
+      return on;
+    };
+
+    // Dev helper: live-tweak the active scene's skybox rotation.
+    // Usage in console: __setRotation(45)  // degrees, or omit arg for current value.
+    (window as any).__setRotation = (deg?: number) => {
+      // Ensure backgroundRotation exists, then mutate in place so three.js picks it up.
+      if (!this.scene.backgroundRotation) {
+        this.scene.backgroundRotation = new THREE.Euler(0, 0, 0);
+      }
+      const rot = this.scene.backgroundRotation as THREE.Euler;
+      if (typeof deg === 'number') {
+        const rad = (deg * Math.PI) / 180;
+        rot.set(0, rad, 0);
+        // Also nudge the scene so any cached state sees a fresh assignment
+        this.scene.backgroundRotation = rot;
+        console.log(`%c[rotation] ${deg}° (${rad.toFixed(4)} rad) — paste into scenes.ts skyboxRotationY`,
+          'color: #000; background: #ffd700; font-weight: bold; padding: 1px 6px;');
+        return deg;
+      }
+      const deg2 = +((rot.y * 180) / Math.PI).toFixed(2);
+      console.log(`[rotation] currently ${deg2}° (${rot.y.toFixed(4)} rad)`);
+      return deg2;
+    };
   }
 
   private async startupFlow(container: HTMLElement): Promise<void> {
@@ -278,6 +316,12 @@ export class Game {
     try {
       // Transition background then load IScene
       switchSceneBackground(this.scene, sceneId);
+      const sceneDef = getScene(sceneId);
+      const targetFov = sceneDef?.fov ?? CONFIG.cameraFov;
+      if (this.camera.fov !== targetFov) {
+        this.camera.fov = targetFov;
+        this.camera.updateProjectionMatrix();
+      }
       const sceneColors = CONFIG.sceneColors[sceneId];
       if (sceneColors) {
         updateSceneLighting(this.lights, sceneColors.ambient, sceneColors.directional);
@@ -287,6 +331,20 @@ export class Game {
       // Load interaction audio first, then bind input so callbacks are ready
       await this.interactionAudio.loadScene(sceneId);
       this.setupInput();
+
+      // First-visit hotspot hint — pulsing dots over each hotspot for ~6s,
+      // dismissed early if the user starts tapping. Shown once per scene.
+      hotspotHint.setCamera(this.camera);
+      const hotspots = getHotspots(sceneId);
+      if (hotspots.length > 0 && !this.store.state.hotspotsSeenScenes.includes(sceneId)) {
+        const rotY = sceneDef?.skyboxRotationY ?? 0;
+        hotspotHint.show(hotspots, rotY);
+        this.store.update({
+          hotspotsSeenScenes: [...this.store.state.hotspotsSeenScenes, sceneId],
+        });
+      } else {
+        hotspotHint.dismiss();
+      }
 
       await this.acquireWakeLock();
     } catch (err) {
@@ -326,11 +384,12 @@ export class Game {
       onTap: (x, y) => {
         this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
+        hotspotHint.dismissEarly();
 
         // Hotspot scenes: require a hit and use the hotspot's surface.
         // Outside any hotspot = silent.
         let tapSurface = surface;
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) {
             this.store.update({ isInteracting: true, interactionType: 'tap' });
@@ -449,7 +508,7 @@ export class Game {
         this.playerHUD.bringUpUI();
 
         let holdSurface = surface;
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) return;
           holdSurface = hit.surface as typeof surface;
@@ -528,6 +587,8 @@ export class Game {
         );
       }
     }
+
+    hotspotHint.update();
 
     this.renderer.render(this.scene, this.camera);
   };

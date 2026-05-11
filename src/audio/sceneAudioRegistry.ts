@@ -362,6 +362,86 @@ export const SCENE_AUDIO_REGISTRY: SceneAudioDef[] = [
 
     ambientOneShots: [],
   },
+
+  // ============================================
+  // CLOCKMAKER WORKSHOP SCENE — hotspot-driven (skybox + 6 hotspots)
+  // ============================================
+  {
+    sceneId: 'clockmaker-workshop',
+
+    baseAmbience: [
+      {
+        id: 'clocks_async_loop_01', file: 'ambient/clocks-async-loop-01.wav',
+        isPremium: true, interactionCategory: 'ambient',
+        recommendedUse: 'Asynchronous wall-clock ticking texture — the iconic clockmaker baseline',
+      },
+    ],
+
+    taps: [
+      {
+        surface: 'lamp',
+        sounds: [
+          { id: 'lamp_glass_tink_01', file: 'interactions/tap/lamp/lamp-glass-tink-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'lamp_glass_tink_02', file: 'interactions/tap/lamp/lamp-glass-tink-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'gauge',
+        sounds: [
+          { id: 'gauge_tick_01', file: 'interactions/tap/gauge/gauge-tick-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'gauge_tick_02', file: 'interactions/tap/gauge/gauge-tick-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'window',
+        sounds: [
+          { id: 'window_breeze_rustle_01', file: 'interactions/tap/window/window-breeze-rustle-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'window_breeze_rustle_02', file: 'interactions/tap/window/window-breeze-rustle-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'workbench',
+        sounds: [
+          { id: 'workbench_tap_01', file: 'interactions/tap/workbench/workbench-tap-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'workbench_tap_02', file: 'interactions/tap/workbench/workbench-tap-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'workbench_tap_03', file: 'interactions/tap/workbench/workbench-tap-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'clock-left',
+        sounds: [
+          { id: 'clock_chime_left_01', file: 'interactions/tap/clock-left/clock-chime-left-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'clock_chime_left_02', file: 'interactions/tap/clock-left/clock-chime-left-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'clock-right',
+        sounds: [
+          { id: 'clock_tick_right_01', file: 'interactions/tap/clock-right/clock-tick-right-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'clock_tick_right_02', file: 'interactions/tap/clock-right/clock-tick-right-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+    ],
+
+    drags: [],
+
+    holds: [
+      {
+        surface: 'lamp',
+        loops: [
+          { id: 'lamp_flame_hiss_loop_01', file: 'interactions/hold/lamp/lamp-flame-hiss-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'window',
+        loops: [
+          { id: 'window_pine_wind_loop_01', file: 'interactions/hold/window/window-pine-wind-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+    ],
+
+    ambientOneShots: [],
+  },
 ];
 
 export function getSceneAudio(sceneId: string): SceneAudioDef | undefined {

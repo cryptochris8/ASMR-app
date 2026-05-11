@@ -47,6 +47,13 @@ export class SaveSystem {
     } catch (err) {
       console.warn('[Save] Failed to load:', err);
     }
+
+    // TEMP DEV OVERRIDE — force premium so older localStorage saves get
+    // upgraded for mobile testing. Remove before launch.
+    this.store.update({
+      subscriptionTier: 'premium',
+      subscriptionExpiresAt: Date.now() + 365 * 24 * 60 * 60_000,
+    });
   }
 
   autoSave(): void {
