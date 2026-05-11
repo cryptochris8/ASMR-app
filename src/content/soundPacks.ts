@@ -105,7 +105,7 @@ export const SOUND_PACKS: SoundPack[] = [
     description: 'Soft water drips, slow stream, gentle ripples',
     premium: true,
     category: 'water',
-    sceneCompatible: ['rain-window', 'sand-table'],
+    sceneCompatible: ['all'],
     mixerCategory: 'Water',
     sounds: [
       { id: 'water_drip', file: 'water/drip.wav', loop: true, category: 'ambient', defaultVolume: 0.35 },

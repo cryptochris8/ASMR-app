@@ -839,6 +839,74 @@
       "prompt": "single deep mechanical grandfather clock tock, brief warm low thunk, close-mic ASMR, no music, no voice",
       "duration_seconds": 0.8,
       "prompt_influence": 0.85
+    },
+
+    {
+      "id": "mixer_night_crickets",
+      "pack": "mixer-cross-scene",
+      "file": "packs/night/crickets.wav",
+      "prompt": "warm calm summer night ambience with distant chirping crickets and very faint breeze, soothing continuous outdoor texture, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
+    },
+    {
+      "id": "mixer_night_wind",
+      "pack": "mixer-cross-scene",
+      "file": "packs/night/soft-wind.wav",
+      "prompt": "very soft continuous low wind through distant trees at night, gentle steady airy whisper, soothing meditative loop, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
+    },
+    {
+      "id": "mixer_night_evening_ambience",
+      "pack": "mixer-cross-scene",
+      "file": "packs/night/evening-ambience.wav",
+      "prompt": "calm warm evening ambience, faint distant cicadas, gentle breeze, far-off frogs, intimate outdoor mood, soothing continuous loop, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "mixer_fan_soft",
+      "pack": "mixer-cross-scene",
+      "file": "packs/noise/fan-soft.wav",
+      "prompt": "very soft continuous oscillating bedroom fan hum, gentle steady airflow with faint motor whir, soothing sleep-friendly loop, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
+    },
+
+    {
+      "id": "mixer_tone_pad",
+      "pack": "mixer-cross-scene",
+      "file": "packs/tone/pad.wav",
+      "prompt": "sustained warm soft ambient pad with very slow swell, soothing wellness drone, no melody, no rhythm, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+    {
+      "id": "mixer_tone_drone",
+      "pack": "mixer-cross-scene",
+      "file": "packs/tone/warm-drone.wav",
+      "prompt": "deep warm low ambient drone with gentle slow modulation, calming sustained tonal bed, no melody, no rhythm, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.4
+    },
+
+    {
+      "id": "mixer_water_drip",
+      "pack": "mixer-cross-scene",
+      "file": "packs/water/drip.wav",
+      "prompt": "very soft slow continuous water drips into a still pool, gentle steady plops with subtle reverb, soothing calm cave-like loop, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.5
+    },
+    {
+      "id": "mixer_water_stream",
+      "pack": "mixer-cross-scene",
+      "file": "packs/water/stream.wav",
+      "prompt": "very soft continuous distant gentle stream flowing over smooth stones, calming steady water trickle texture, no music, no voice",
+      "duration_seconds": 18,
+      "prompt_influence": 0.45
     }
   ]
 }
