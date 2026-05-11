@@ -1,4 +1,4 @@
-import { Store } from '../game/state';
+import { Store, effectiveMasterVolume } from '../game/state';
 import { CONFIG } from '../game/config';
 
 interface LoadedBuffer {
@@ -62,9 +62,9 @@ export class AudioManager {
   private updateVolumes(): void {
     if (!this.masterGain || !this.ambientGain || !this.interactionGain) return;
 
-    const { masterVolume, ambientVolume, interactionVolume, muted } = this.store.state;
+    const { ambientVolume, interactionVolume } = this.store.state;
+    const master = effectiveMasterVolume(this.store.state);
 
-    const master = muted ? 0 : masterVolume;
     this.masterGain.gain.setTargetAtTime(master, this.ctx!.currentTime, 0.05);
     this.ambientGain.gain.setTargetAtTime(ambientVolume, this.ctx!.currentTime, 0.05);
     this.interactionGain.gain.setTargetAtTime(interactionVolume, this.ctx!.currentTime, 0.05);

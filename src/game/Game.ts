@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CONFIG } from './config';
-import { Store, createInitialState, SceneId } from './state';
+import { Store, createInitialState, SceneId, effectiveMasterVolume } from './state';
 import { SubscriptionManager } from './subscription';
 import { SceneController } from './SceneController';
 import { createRenderer } from '../render/renderer';
@@ -8,6 +8,7 @@ import { createScene, switchSceneBackground } from '../render/scene';
 import { createCamera } from '../render/camera';
 import { setupLighting, updateSceneLighting, SceneLights } from '../render/lighting';
 import { AudioManager } from '../audio/AudioManager';
+import { musicChannel } from '../audio/MusicChannel';
 import { InteractionAudioManager } from '../audio/InteractionAudioManager';
 import { InputSystem } from '../systems/input';
 import { SleepTimer } from '../systems/SleepTimer';
@@ -99,6 +100,10 @@ export class Game {
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);
 
+    // Music channel — manages HTMLAudioElement-based scene music so it
+    // honors master volume and the SleepTimer fade.
+    musicChannel.init(this.store);
+
     // Audio — 3-layer interaction system (tap/drag/hold + ambient one-shots)
     this.interactionAudio = new InteractionAudioManager(CONFIG.interaction, this.store);
 
@@ -136,8 +141,7 @@ export class Game {
       }
 
       if (this.interactionAudio.isReady()) {
-        const vol = this.store.state.muted ? 0 : this.store.state.masterVolume;
-        this.interactionAudio.setMasterVolume(vol);
+        this.interactionAudio.setMasterVolume(effectiveMasterVolume(this.store.state));
       }
 
       nightOverlay.setEnabled(this.store.state.warmScreenTintEnabled);
@@ -291,6 +295,9 @@ export class Game {
     // Enable gyroscope (iOS requires user gesture for permission)
     this.gyroLook.enable();
 
+    // Reset swipe pan so the new scene starts at its baked default rotation
+    this.gyroLook.resetPan();
+
     // Initialize interaction audio system with shared AudioContext
     if (!this.interactionAudio.isReady()) {
       const ctx = this.audioManager.getContext();
@@ -433,6 +440,13 @@ export class Game {
       onDragStart: (x, y) => {
         this.lastInputTime = Date.now();
         this.playerHUD.bringUpUI();
+
+        // Hotspot scenes: drag = swipe-to-pan, NOT a drag-trail / drag audio loop.
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+          this.store.update({ isInteracting: true, interactionType: 'drag' });
+          return;
+        }
+
         this.interactionAudio.startDrag(surface);
 
         if (activeScene === 'rain-window') {
@@ -458,6 +472,12 @@ export class Game {
       },
 
       onDragMove: (x, y, dx, dy) => {
+        // Hotspot scenes: drag = swipe-to-pan
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+          this.gyroLook.addPanDelta(dx, dy);
+          return;
+        }
+
         // Throttled drag haptic pulse
         if (Date.now() - this.lastDragHapticAt > 100) {
           (this.hapticsSystem as any).lightFeedback?.();
@@ -488,6 +508,12 @@ export class Game {
       },
 
       onDragEnd: () => {
+        // Hotspot scenes: pan ended, no audio drag to stop.
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+          this.store.update({ isInteracting: false, interactionType: 'none' });
+          return;
+        }
+
         this.interactionAudio.stopDrag();
 
         if (activeScene === 'rain-window') {

@@ -12,6 +12,7 @@ const TRANSIENT_KEYS: ReadonlyArray<keyof AppState> = [
   'timerActive',
   'timerRemainingMs',
   'sleepModeRequested',
+  'timerFadeFactor',
 ];
 
 function migrate(saved: any): any {

@@ -4,6 +4,7 @@ import { getScene } from '../content/scenes';
 import { getHotspots } from '../content/hotspots';
 import { resolveHotspot } from './hotspotResolver';
 import { SceneId } from '../game/state';
+import { musicChannel } from '../audio/MusicChannel';
 
 /**
  * Skybox + hotspots scene. The skybox is the visual; tappable regions
@@ -27,6 +28,8 @@ export class CozyRoomScene implements IScene {
     this.moonlight = new Audio('/audio/music/moonlight-loop.wav');
     this.moonlight.loop = true;
     this.moonlight.preload = 'auto';
+    // Intrinsic 1.0 — file is pre-attenuated; SleepTimer / master slider scale it.
+    musicChannel.register(this.moonlight, 1.0);
   }
 
   toggleSpeakerMusic(): boolean {
@@ -89,6 +92,7 @@ export class CozyRoomScene implements IScene {
 
   dispose(): void {
     if (this.moonlight) {
+      musicChannel.unregister(this.moonlight);
       this.moonlight.pause();
       this.moonlight.src = '';
       this.moonlight = null;

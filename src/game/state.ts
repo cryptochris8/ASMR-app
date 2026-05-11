@@ -74,6 +74,10 @@ export interface AppState {
 
   // Scenes that have already had their hotspot intro hint shown
   hotspotsSeenScenes: SceneId[];
+
+  // 0..1 multiplier applied on top of masterVolume by the SleepTimer.
+  // 1.0 = normal; ramps to 0 during the timer fade-out window.
+  timerFadeFactor: number;
 }
 
 export function createInitialState(): AppState {
@@ -122,7 +126,14 @@ export function createInitialState(): AppState {
     warmScreenTintEnabled: false,
 
     hotspotsSeenScenes: [],
+    timerFadeFactor: 1.0,
   };
+}
+
+/** Effective audio master after sleep-timer fade and mute are applied. 0..1. */
+export function effectiveMasterVolume(state: AppState): number {
+  if (state.muted) return 0;
+  return state.masterVolume * state.timerFadeFactor;
 }
 
 type Listener = () => void;

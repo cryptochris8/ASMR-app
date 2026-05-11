@@ -59,7 +59,7 @@ export const SOUND_PACKS: SoundPack[] = [
     description: 'Glass tapping, wood tapping, fabric brushing',
     premium: false,
     category: 'tapping',
-    sceneCompatible: ['rain-window', 'cozy-room', 'sand-table'],
+    sceneCompatible: ['all'],
     mixerCategory: 'Tactile',
     sounds: [
       { id: 'tap_glass_soft', file: 'tapping/glass-soft.wav', loop: false, category: 'interaction', defaultVolume: 0.5 },
@@ -90,7 +90,7 @@ export const SOUND_PACKS: SoundPack[] = [
     description: 'Distant crickets, soft wind, evening atmosphere',
     premium: true,
     category: 'night',
-    sceneCompatible: ['rain-window', 'cozy-room', 'sand-table'],
+    sceneCompatible: ['all'],
     mixerCategory: 'Nature',
     sounds: [
       { id: 'night_crickets', file: 'night/crickets.wav', loop: true, category: 'ambient', defaultVolume: 0.3 },
@@ -120,7 +120,7 @@ export const SOUND_PACKS: SoundPack[] = [
     description: 'Soft fan, white noise, brown noise',
     premium: false,
     category: 'noise',
-    sceneCompatible: ['rain-window', 'cozy-room', 'sand-table'],
+    sceneCompatible: ['all'],
     mixerCategory: 'Noise',
     sounds: [
       { id: 'fan_soft', file: 'noise/fan-soft.wav', loop: true, category: 'ambient', defaultVolume: 0.4 },
@@ -135,7 +135,7 @@ export const SOUND_PACKS: SoundPack[] = [
     description: 'Soft tonal pads, breathing guides, warm drones',
     premium: true,
     category: 'tone',
-    sceneCompatible: ['rain-window', 'cozy-room', 'sand-table'],
+    sceneCompatible: ['all'],
     mixerCategory: 'Wellness',
     sounds: [
       { id: 'tone_pad', file: 'tone/pad.wav', loop: true, category: 'ambient', defaultVolume: 0.25 },
@@ -165,7 +165,7 @@ export function getSoundPack(id: string): SoundPack | undefined {
 }
 
 export function getPacksForScene(sceneId: string): SoundPack[] {
-  return SOUND_PACKS.filter(p => p.sceneCompatible.includes(sceneId));
+  return SOUND_PACKS.filter(p => p.sceneCompatible.includes(sceneId) || p.sceneCompatible.includes('all'));
 }
 
 export function getFreePacks(): SoundPack[] {

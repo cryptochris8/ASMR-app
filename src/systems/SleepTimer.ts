@@ -22,6 +22,7 @@ export class SleepTimer {
       timerDurationMs: durationMs,
       timerRemainingMs: durationMs,
       lastUsedTimerMs: durationMs,
+      timerFadeFactor: 1.0,
     });
 
     this.endTime = Date.now() + durationMs;
@@ -42,10 +43,11 @@ export class SleepTimer {
 
     this.store.update({ timerRemainingMs: remaining });
 
+    // Audio fade — drive the global timerFadeFactor (0..1). All audio paths
+    // (mixer, interaction, scene music) honor it via effectiveMasterVolume.
     if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerFadeAudio) {
-      const fadeProgress = 1 - (remaining / CONFIG.timerFadeDuration);
-      const targetVolume = this.store.state.masterVolume * (1 - fadeProgress);
-      this.audio.fadeMasterTo(Math.max(0, targetVolume), 1000);
+      const factor = Math.max(0, remaining / CONFIG.timerFadeDuration);
+      this.store.update({ timerFadeFactor: factor });
     }
 
     if (remaining <= CONFIG.timerFadeDuration && this.store.state.timerDimScreen) {
@@ -75,9 +77,9 @@ export class SleepTimer {
     this.store.update({
       timerActive: false,
       timerRemainingMs: 0,
+      timerFadeFactor: 1.0,
     });
 
-    this.audio.fadeMasterTo(this.store.state.masterVolume, 500);
     this.removeDimOverlay();
   }
 
@@ -90,9 +92,8 @@ export class SleepTimer {
     this.store.update({
       timerActive: false,
       timerRemainingMs: 0,
+      timerFadeFactor: 0,
     });
-
-    this.audio.fadeMasterTo(0, 3000);
 
     if (this.store.state.timerDimScreen) {
       this.updateDimOverlay(CONFIG.timerDimOpacity);

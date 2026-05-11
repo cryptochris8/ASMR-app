@@ -4,6 +4,7 @@ import { getScene } from '../content/scenes';
 import { getHotspots } from '../content/hotspots';
 import { resolveHotspot } from './hotspotResolver';
 import { SceneId } from '../game/state';
+import { musicChannel } from '../audio/MusicChannel';
 
 /**
  * Skybox + hotspots scene for the mystical apothecary shop.
@@ -30,12 +31,13 @@ export class ApothecaryShopScene implements IScene {
     this.candleFlicker = new Audio('/audio/interactions/hold/candles/candle-flicker-loop-01.wav');
     this.candleFlicker.loop = true;
     this.candleFlicker.preload = 'auto';
-    this.candleFlicker.volume = 0.5;
+    musicChannel.register(this.candleFlicker, 0.5);
 
     this.bgMusic = new Audio('/audio/music/gymnopedie-loop.wav');
     this.bgMusic.loop = true;
     this.bgMusic.preload = 'auto';
-    this.bgMusic.volume = 1.0; // file is pre-attenuated to 0.35; tweak here for relative mix
+    // Intrinsic 1.0 — file is pre-attenuated; SleepTimer / master slider scale it.
+    musicChannel.register(this.bgMusic, 1.0);
   }
 
   toggleCandleFlicker(): boolean {
@@ -101,12 +103,14 @@ export class ApothecaryShopScene implements IScene {
 
   dispose(): void {
     if (this.candleFlicker) {
+      musicChannel.unregister(this.candleFlicker);
       this.candleFlicker.pause();
       this.candleFlicker.src = '';
       this.candleFlicker = null;
     }
     this.candleFlickerPlaying = false;
     if (this.bgMusic) {
+      musicChannel.unregister(this.bgMusic);
       this.bgMusic.pause();
       this.bgMusic.src = '';
       this.bgMusic = null;
