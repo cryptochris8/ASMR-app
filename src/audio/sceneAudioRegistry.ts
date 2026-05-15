@@ -442,6 +442,93 @@ export const SCENE_AUDIO_REGISTRY: SceneAudioDef[] = [
 
     ambientOneShots: [],
   },
+
+  // ============================================
+  // VINTAGE TRAIN SCENE — hotspot-driven (skybox + 4 hotspots)
+  // ============================================
+  {
+    sceneId: 'vintage-train',
+
+    baseAmbience: [
+      {
+        id: 'train_wheels_loop_01', file: 'ambient/train-wheels-loop-01.wav',
+        isPremium: true, interactionCategory: 'ambient',
+        recommendedUse: 'Rhythmic wheels-on-rail clack with low rumble — the iconic train baseline',
+      },
+    ],
+
+    taps: [
+      {
+        surface: 'book',
+        sounds: [
+          { id: 'book_page_rustle_01', file: 'interactions/tap/book/book-page-rustle-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'book_page_rustle_02', file: 'interactions/tap/book/book-page-rustle-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'book_page_rustle_03', file: 'interactions/tap/book/book-page-rustle-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'teacup',
+        sounds: [
+          { id: 'teacup_clink_01', file: 'interactions/tap/teacup/teacup-clink-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'teacup_clink_02', file: 'interactions/tap/teacup/teacup-clink-02.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'teacup_clink_03', file: 'interactions/tap/teacup/teacup-clink-03.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'window-left',
+        sounds: [
+          { id: 'window_latch_left_01', file: 'interactions/tap/window-left/window-latch-left-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'window_latch_left_02', file: 'interactions/tap/window-left/window-latch-left-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+      {
+        surface: 'window-right',
+        sounds: [
+          { id: 'window_latch_right_01', file: 'interactions/tap/window-right/window-latch-right-01.wav', isPremium: true, interactionCategory: 'tap' },
+          { id: 'window_latch_right_02', file: 'interactions/tap/window-right/window-latch-right-02.wav', isPremium: true, interactionCategory: 'tap' },
+        ],
+      },
+    ],
+
+    drags: [],
+
+    holds: [
+      // Book is sticky tap-to-toggle for the storytelling voiceover (handled in
+      // VintageTrainScene); this hold layer is the secondary on-press feel
+      // (soft breath + leather creak while finger rests on cover).
+      {
+        surface: 'book',
+        loops: [
+          { id: 'book_breath_hold_loop_01', file: 'interactions/hold/book/book-breath-hold-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'teacup',
+        loops: [
+          { id: 'teacup_stir_loop_01', file: 'interactions/hold/teacup/teacup-stir-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'window-left',
+        loops: [
+          { id: 'window_whoosh_loop_01', file: 'interactions/hold/window/window-whoosh-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+      {
+        surface: 'window-right',
+        loops: [
+          // Same file as window-left — shared passing-scenery layer.
+          { id: 'window_whoosh_loop_01', file: 'interactions/hold/window/window-whoosh-loop-01.wav', isPremium: true, interactionCategory: 'hold' },
+        ],
+      },
+    ],
+
+    ambientOneShots: [
+      { id: 'train_whistle_distant_01', file: 'one_shots/train/train-whistle-distant-01.wav', minIntervalMs: 60000, maxVolume: 0.28, isPremium: true, interactionCategory: 'one-shot' },
+      { id: 'train_steam_hiss_01',      file: 'one_shots/train/train-steam-hiss-01.wav',      minIntervalMs: 40000, maxVolume: 0.20, isPremium: true, interactionCategory: 'one-shot' },
+      { id: 'carriage_creak_01',        file: 'one_shots/train/carriage-creak-01.wav',        minIntervalMs: 25000, maxVolume: 0.18, isPremium: true, interactionCategory: 'one-shot' },
+    ],
+  },
 ];
 
 export function getSceneAudio(sceneId: string): SceneAudioDef | undefined {

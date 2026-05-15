@@ -42,6 +42,12 @@ export const SCENE_HOTSPOTS: Partial<Record<SceneId, HotspotDef[]>> = {
     { id: 'clock-left',  yawDeg:  -38.88, pitchDeg:  13.19, radiusDeg: 10, surface: 'clock-left',  label: 'Mantel clock' },
     { id: 'clock-right', yawDeg:  -29.40, pitchDeg:  -6.81, radiusDeg: 10, surface: 'clock-right', label: 'Grandfather clock' },
   ],
+  'vintage-train': [
+    { id: 'book',         yawDeg:  23.58, pitchDeg: -48.55, radiusDeg: 10, surface: 'book',         label: 'Book on table' },
+    { id: 'teacup',       yawDeg: -53.03, pitchDeg: -37.87, radiusDeg:  8, surface: 'teacup',       label: 'Teacup on bench' },
+    { id: 'window-right', yawDeg: -58.25, pitchDeg: -16.65, radiusDeg: 14, surface: 'window-right', label: 'Right window' },
+    { id: 'window-left',  yawDeg:  68.56, pitchDeg: -14.16, radiusDeg: 14, surface: 'window-left',  label: 'Left window' },
+  ],
 };
 
 export function getHotspots(sceneId: SceneId): HotspotDef[] {

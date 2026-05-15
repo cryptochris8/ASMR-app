@@ -907,6 +907,148 @@
       "prompt": "very soft continuous distant gentle stream flowing over smooth stones, calming steady water trickle texture, no music, no voice",
       "duration_seconds": 18,
       "prompt_influence": 0.45
+    },
+
+    {
+      "id": "train_wheels_loop_01",
+      "pack": "vintage-train",
+      "file": "ambient/train-wheels-loop-01.wav",
+      "prompt": "vintage steam train interior, rhythmic steady wheels-on-rail clack-clack at moderate tempo, low continuous engine rumble underneath, gentle wooden carriage sway, no whistle, no voice, no music, calm sleep ASMR",
+      "duration_seconds": 18,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "book_page_rustle_01",
+      "pack": "vintage-train",
+      "file": "interactions/tap/book/book-page-rustle-01.wav",
+      "prompt": "single soft turn of a single thin paperback page, gentle paper rustle, very short, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.9,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "book_page_rustle_02",
+      "pack": "vintage-train",
+      "file": "interactions/tap/book/book-page-rustle-02.wav",
+      "prompt": "quick fingertip flip of a book page, brief crisp paper rustle, short, close-mic ASMR, no music, no voice",
+      "duration_seconds": 0.8,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "book_page_rustle_03",
+      "pack": "vintage-train",
+      "file": "interactions/tap/book/book-page-rustle-03.wav",
+      "prompt": "slow thumb riffle across a few book pages, soft brushing paper sound, very short, close-mic ASMR, no music",
+      "duration_seconds": 1.0,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "teacup_clink_01",
+      "pack": "vintage-train",
+      "file": "interactions/tap/teacup/teacup-clink-01.wav",
+      "prompt": "delicate porcelain teacup gently set down on a wooden bench, soft single tink, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.7,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "teacup_clink_02",
+      "pack": "vintage-train",
+      "file": "interactions/tap/teacup/teacup-clink-02.wav",
+      "prompt": "small silver spoon lightly chimes against the inner rim of a porcelain teacup, single bright tink, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "teacup_clink_03",
+      "pack": "vintage-train",
+      "file": "interactions/tap/teacup/teacup-clink-03.wav",
+      "prompt": "fingernail taps the side of a porcelain saucer, soft mid-pitch tick, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "window_latch_left_01",
+      "pack": "vintage-train",
+      "file": "interactions/tap/window-left/window-latch-left-01.wav",
+      "prompt": "small brass window latch lightly clicks, single short metallic snap, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "window_latch_left_02",
+      "pack": "vintage-train",
+      "file": "interactions/tap/window-left/window-latch-left-02.wav",
+      "prompt": "fingertip taps cold glass of a vintage train window, soft dull tap with subtle ring, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "window_latch_right_01",
+      "pack": "vintage-train",
+      "file": "interactions/tap/window-right/window-latch-right-01.wav",
+      "prompt": "small brass window latch clicks open one notch, single short metallic clack, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+    {
+      "id": "window_latch_right_02",
+      "pack": "vintage-train",
+      "file": "interactions/tap/window-right/window-latch-right-02.wav",
+      "prompt": "knuckle gently raps glass of a vintage train window, soft single thunk with faint ring, very short, close-mic ASMR, no music",
+      "duration_seconds": 0.6,
+      "prompt_influence": 0.85
+    },
+
+    {
+      "id": "book_breath_hold_loop_01",
+      "pack": "vintage-train",
+      "file": "interactions/hold/book/book-breath-hold-loop-01.wav",
+      "prompt": "very soft slow breathing while reading, faint leather book cover creak, calm and intimate, gentle continuous texture for seamless loop, no words, no music, close-mic ASMR",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+    {
+      "id": "teacup_stir_loop_01",
+      "pack": "vintage-train",
+      "file": "interactions/hold/teacup/teacup-stir-loop-01.wav",
+      "prompt": "slow continuous gentle stirring of a small silver spoon inside a porcelain teacup, soft repeating clinks against the rim, calm and steady for seamless loop, close-mic ASMR, no music",
+      "duration_seconds": 6,
+      "prompt_influence": 0.6
+    },
+    {
+      "id": "window_whoosh_loop_01",
+      "pack": "vintage-train",
+      "file": "interactions/hold/window/window-whoosh-loop-01.wav",
+      "prompt": "muffled outside-the-train wind passing scenery, soft continuous low whoosh as countryside flies past a vintage train window, calm steady for seamless loop, no whistles, no voice, no music",
+      "duration_seconds": 8,
+      "prompt_influence": 0.5
+    },
+
+    {
+      "id": "train_whistle_distant_01",
+      "pack": "vintage-train",
+      "file": "one_shots/train/train-whistle-distant-01.wav",
+      "prompt": "distant steam train whistle echoing across countryside, soft warm tone with gentle decay, single call, no music, no voice",
+      "duration_seconds": 4,
+      "prompt_influence": 0.55
+    },
+    {
+      "id": "train_steam_hiss_01",
+      "pack": "vintage-train",
+      "file": "one_shots/train/train-steam-hiss-01.wav",
+      "prompt": "short soft puff of steam venting from a vintage locomotive, gentle hiss with brief release, no music, no voice",
+      "duration_seconds": 2.5,
+      "prompt_influence": 0.6
+    },
+    {
+      "id": "carriage_creak_01",
+      "pack": "vintage-train",
+      "file": "one_shots/train/carriage-creak-01.wav",
+      "prompt": "single soft wooden carriage creak as a vintage train sways gently on tracks, brief warm creak with low rumble underneath, no music, no voice",
+      "duration_seconds": 2,
+      "prompt_influence": 0.6
     }
   ]
 }

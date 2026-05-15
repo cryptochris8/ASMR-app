@@ -22,6 +22,7 @@ import { SandTableScene } from '../scenes/SandTableScene';
 import { TempleZenScene } from '../scenes/TempleZenScene';
 import { ApothecaryShopScene } from '../scenes/ApothecaryShopScene';
 import { ClockmakerWorkshopScene } from '../scenes/ClockmakerWorkshopScene';
+import { VintageTrainScene } from '../scenes/VintageTrainScene';
 import { HotspotEditor } from '../dev/HotspotEditor';
 import { getScene } from '../content/scenes';
 import { nightOverlay } from '../ui/NightOverlay';
@@ -96,6 +97,7 @@ export class Game {
     this.sceneController.register('temple-zen', () => new TempleZenScene());
     this.sceneController.register('apothecary-shop', () => new ApothecaryShopScene());
     this.sceneController.register('clockmaker-workshop', () => new ClockmakerWorkshopScene());
+    this.sceneController.register('vintage-train', () => new VintageTrainScene());
 
     // Audio — main mixer system (ambient loops, mixer panel layers)
     this.audioManager = new AudioManager(this.store);
@@ -396,7 +398,7 @@ export class Game {
         // Hotspot scenes: require a hit and use the hotspot's surface.
         // Outside any hotspot = silent.
         let tapSurface = surface;
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop' || activeScene === 'vintage-train') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) {
             this.store.update({ isInteracting: true, interactionType: 'tap' });
@@ -416,6 +418,11 @@ export class Game {
         if (activeScene === 'apothecary-shop' && tapSurface === 'candles') {
           const aps = this.sceneController.current() as ApothecaryShopScene | null;
           aps?.toggleCandleFlicker();
+        }
+        // Sticky storytelling: tap-book-to-toggle ASMR voiceover
+        if (activeScene === 'vintage-train' && tapSurface === 'book') {
+          const vts = this.sceneController.current() as VintageTrainScene | null;
+          vts?.toggleStory();
         }
 
         if (activeScene === 'rain-window') {
@@ -442,7 +449,7 @@ export class Game {
         this.playerHUD.bringUpUI();
 
         // Hotspot scenes: drag = swipe-to-pan, NOT a drag-trail / drag audio loop.
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop' || activeScene === 'vintage-train') {
           this.store.update({ isInteracting: true, interactionType: 'drag' });
           return;
         }
@@ -473,7 +480,7 @@ export class Game {
 
       onDragMove: (x, y, dx, dy) => {
         // Hotspot scenes: drag = swipe-to-pan
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop' || activeScene === 'vintage-train') {
           this.gyroLook.addPanDelta(dx, dy);
           return;
         }
@@ -509,7 +516,7 @@ export class Game {
 
       onDragEnd: () => {
         // Hotspot scenes: pan ended, no audio drag to stop.
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop' || activeScene === 'vintage-train') {
           this.store.update({ isInteracting: false, interactionType: 'none' });
           return;
         }
@@ -534,7 +541,7 @@ export class Game {
         this.playerHUD.bringUpUI();
 
         let holdSurface = surface;
-        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop') {
+        if (activeScene === 'cozy-room' || activeScene === 'apothecary-shop' || activeScene === 'clockmaker-workshop' || activeScene === 'vintage-train') {
           const hit = this.hitTestActive(x, y);
           if (!hit?.surface) return;
           holdSurface = hit.surface as typeof surface;

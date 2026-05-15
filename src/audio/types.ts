@@ -22,7 +22,8 @@ export type SurfaceType =
   | 'glass' | 'wood' | 'fabric' | 'sand' | 'ceramic'
   | 'fireplace' | 'speaker' | 'bookshelf' | 'armchair' | 'pot'
   | 'jars' | 'spellbook' | 'candles' | 'herbs' | 'scale' | 'mortar'
-  | 'lamp' | 'gauge' | 'window' | 'workbench' | 'clock-left' | 'clock-right';
+  | 'lamp' | 'gauge' | 'window' | 'workbench' | 'clock-left' | 'clock-right'
+  | 'book' | 'teacup' | 'window-left' | 'window-right';
 
 /** Interaction sound categories */
 export type InteractionCategory = 'tap' | 'drag' | 'hold';

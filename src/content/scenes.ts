@@ -95,6 +95,19 @@ export const SCENES: SceneDef[] = [
     bgColor: 0x0e0a08,
     thumbnailColor: 0x8a6a3a,
   },
+  {
+    id: 'vintage-train',
+    name: 'Vintage Train',
+    description: 'Rhythmic clack of a wooden carriage rolling through the countryside',
+    moodLabel: 'Rolling & Steady',
+    premium: true,
+    skybox: 'vintage-train',
+    skyboxRotationY: 0, // adjust after previewing
+    ambientSoundPack: 'tone',
+    interactionSounds: [],
+    bgColor: 0x140e08,
+    thumbnailColor: 0x8a5a32,
+  },
 ];
 
 export function getScene(id: SceneId): SceneDef | undefined {
