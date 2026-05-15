@@ -62,6 +62,13 @@ export class InputSystem {
   }
 
   private onPointerDown(e: PointerEvent): void {
+    // Only handle pointer events that originate on the canvas. UI overlays
+    // (mixer sliders, settings buttons, timer modal, etc.) are children of
+    // the same container and would otherwise bubble in and trigger swipe-to-pan
+    // or hotspot taps when the user is just adjusting a slider.
+    const target = e.target as HTMLElement | null;
+    if (!target || target.tagName !== 'CANVAS') return;
+
     e.preventDefault();
     this.pointerDown = true;
     this.startX = e.clientX;

@@ -51,7 +51,6 @@ export class PlayerHUD extends UIPanel {
     if (!this.visible) {
       this.visible = true;
       this.element.style.opacity = '1';
-      this.element.style.pointerEvents = 'auto';
     }
     this.resetAutoHide();
   }
@@ -165,7 +164,6 @@ export class PlayerHUD extends UIPanel {
     this.autoHideTimer = window.setTimeout(() => {
       this.visible = false;
       this.element.style.opacity = '0.15';
-      this.element.style.pointerEvents = 'none';
       // Keep persistent timer visible even when HUD is dimmed
       const persistentBadge = this.element.querySelector('.player-persistent-timer') as HTMLElement;
       if (persistentBadge && this.store.state.timerActive) {
