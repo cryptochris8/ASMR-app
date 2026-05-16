@@ -1,16 +1,26 @@
-# Codemagic build pipelines for the ASMR Sleep App.
+# Codemagic build pipelines for the ASMR Sleeps app.
 #
-# Manual setup before the first run will succeed:
-#   1. In App Store Connect, create the app entry with bundle ID
-#      com.athletedomains.asmrsleep and grab its numeric Apple ID. Drop it into
-#      APP_STORE_APPLE_ID below.
-#   2. In Codemagic: Teams -> Integrations -> App Store Connect, add an
-#      API key. Name it `asmr-app-store-key` (or change the name below to
-#      match what you used).
-#   3. (Optional) Create a TestFlight beta group in App Store Connect and
-#      uncomment beta_groups at the bottom to auto-distribute on upload.
+# Standing team-level setup in Codemagic (already configured, shared across
+# all athletedomains apps — do not recreate):
+#   - App Store Connect API integration named `Pregame` (must be App Manager
+#     access level, not Limited).
+#   - Apple Distribution certificate, team-wide, generated/uploaded once.
+#   - Apple Developer Team ID: Q3UH3Y4QUU
 #
-# ios/ is intentionally gitignored — Capacitor regenerates it on every
+# One-time per-app UI step required before the first build will succeed:
+#   Codemagic Team settings -> codemagic.yaml settings -> Code signing
+#   identities -> iOS provisioning profiles tab -> Fetch profiles.
+#   Find or have Codemagic create an App Store profile for
+#   com.athletedomains.asmrsleep, Download selected, assign a Reference
+#   name (e.g. asmr_sleeps_appstore).
+#
+#   Skipping this = every build fails with "no matching profiles found".
+#
+# Optional once you have a TestFlight beta group set up in App Store
+# Connect: uncomment beta_groups under publishing to auto-distribute on
+# upload.
+#
+# ios/ is intentionally gitignored - Capacitor regenerates it on every
 # Codemagic build, so this workflow runs `cap add ios` before syncing.
 
 workflows:
@@ -20,7 +30,7 @@ workflows:
     max_build_duration: 60
 
     integrations:
-      app_store_connect: asmr-app-store-key
+      app_store_connect: Pregame
 
     environment:
       ios_signing:
@@ -29,6 +39,7 @@ workflows:
       vars:
         APP_STORE_APPLE_ID: 6769982115
         BUNDLE_ID: com.athletedomains.asmrsleep
+        APPLE_TEAM_ID: Q3UH3Y4QUU
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
       node: 20.11.0
@@ -61,19 +72,11 @@ workflows:
           NEW_BUILD=$((LATEST_BUILD + 1))
           agvtool new-version -all $NEW_BUILD
 
-      - name: Initialize keychain
-        script: keychain initialize
-
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --create
-
-      - name: Add certificates to keychain
-        script: keychain add-certificates
-
-      - name: Apply signing settings to Xcode project
+      - name: Apply signing profiles to Xcode project
+        # Required even with ios_signing: block — generates
+        # /Users/builder/export_options.plist that xcode-project build-ipa
+        # needs. Pulls the pre-fetched profile/cert from Codemagic's
+        # Code signing identities store; does NOT create them.
         script: xcode-project use-profiles
 
       - name: Build IPA
