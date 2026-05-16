@@ -1,4 +1,4 @@
-export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table' | 'temple-zen' | 'apothecary-shop' | 'clockmaker-workshop' | 'vintage-train';
+export type SceneId = 'rain-window' | 'cozy-room' | 'sand-table' | 'temple-zen' | 'apothecary-shop' | 'clockmaker-workshop' | 'vintage-train' | 'old-lighthouse';
 export type SoundPackId = string;
 export type SubscriptionTier = 'free' | 'premium';
 

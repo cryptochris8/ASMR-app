@@ -24,3 +24,6 @@ android/app/src/main/assets/public/
 
 # Test output
 coverage/
+
+# Claude Code local settings
+.claude/

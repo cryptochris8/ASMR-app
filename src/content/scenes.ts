@@ -108,6 +108,23 @@ export const SCENES: SceneDef[] = [
     bgColor: 0x140e08,
     thumbnailColor: 0x8a5a32,
   },
+  // Hidden from home screen until audio pack + hotspots are authored.
+  // Scene class, skybox, and Game.ts registration are still wired — uncomment
+  // this block to restore.
+  // {
+  //   id: 'old-lighthouse',
+  //   name: 'Old Lighthouse',
+  //   description: 'Brass lantern, sea charts, and stormy ocean glimpsed through stone alcoves',
+  //   moodLabel: 'Stormy & Sheltered',
+  //   premium: true,
+  //   skybox: 'old-lighthouse',
+  //   skyboxRotationY: Math.PI / 4, // ~45° — right rope center, window left, lantern right
+  //   fov: 90, // wider lens to fit window + rope + lantern + brass tools in frame
+  //   ambientSoundPack: 'tone',
+  //   interactionSounds: [],
+  //   bgColor: 0x0c1018,
+  //   thumbnailColor: 0xc99044,
+  // },
 ];
 
 export function getScene(id: SceneId): SceneDef | undefined {
