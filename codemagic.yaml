@@ -101,22 +101,9 @@ workflows:
           find ios -name "Podfile" -not -path "*/Pods/*" || echo "(none)"
           echo "=========================================="
 
-      - name: Install CocoaPods dependencies
-        script: |
-          set -e
-          PODFILE=$(find ios -name "Podfile" -not -path "*/Pods/*" | head -1)
-          if [ -z "$PODFILE" ]; then
-            echo "No Podfile found in ios/. Layout:"
-            find ios -maxdepth 4 -type d 2>&1 || echo "(ios/ doesn't exist)"
-            echo ""
-            echo "All files in ios/:"
-            find ios -type f 2>&1 | head -50 || true
-            exit 1
-          fi
-          PODFILE_DIR=$(dirname "$PODFILE")
-          echo "Running pod install in $PODFILE_DIR"
-          cd "$PODFILE_DIR"
-          pod install
+      # No CocoaPods step: Capacitor 8 uses Swift Package Manager by default
+      # (ios/App/CapApp-SPM/Package.swift), so no Podfile is generated and
+      # xcodebuild resolves dependencies via SPM during the archive.
 
       - name: Set build number from App Store Connect
         script: |
@@ -137,10 +124,12 @@ workflows:
       - name: Build IPA
         script: |
           set -e
-          WORKSPACE=$(find ios -name "App.xcworkspace" -type d | head -1)
-          echo "Building $WORKSPACE / scheme $XCODE_SCHEME"
+          # Capacitor 8 produces an SPM-based project — no top-level
+          # .xcworkspace, so build directly against the .xcodeproj.
+          PROJECT=$(find ios -name "App.xcodeproj" -type d | head -1)
+          echo "Building $PROJECT / scheme $XCODE_SCHEME"
           xcode-project build-ipa \
-            --workspace "$WORKSPACE" \
+            --project "$PROJECT" \
             --scheme "$XCODE_SCHEME"
 
     artifacts:
