@@ -62,12 +62,18 @@ export class InputSystem {
   }
 
   private onPointerDown(e: PointerEvent): void {
-    // Only handle pointer events that originate on the canvas. UI overlays
-    // (mixer sliders, settings buttons, timer modal, etc.) are children of
-    // the same container and would otherwise bubble in and trigger swipe-to-pan
-    // or hotspot taps when the user is just adjusting a slider.
+    // Only handle pointer events that originate on the canvas (or fall through
+    // to the container). UI overlays (mixer sliders, settings buttons, timer
+    // modal, etc.) are children of the same container and would otherwise
+    // bubble in and trigger swipe-to-pan or hotspot taps when the user is just
+    // adjusting a slider.
+    //
+    // iOS WKWebView quirk: when a tap lands on a click-through overlay
+    // (pointer-events: none), the target on iOS sometimes resolves to the
+    // container itself rather than the underlying canvas, so we accept both.
     const target = e.target as HTMLElement | null;
-    if (!target || target.tagName !== 'CANVAS') return;
+    if (!target) return;
+    if (target.tagName !== 'CANVAS' && target !== this.container) return;
 
     e.preventDefault();
     this.pointerDown = true;
