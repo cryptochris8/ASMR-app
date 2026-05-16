@@ -13,7 +13,7 @@ export class SplashScreen extends UIPanel {
 
   protected render(): void {
     this.element.setAttribute('role', 'status');
-    this.element.setAttribute('aria-label', 'Loading ASMR Sleep');
+    this.element.setAttribute('aria-label', 'Loading ASMR Sleeps');
     this.element.innerHTML = `
       <div class="splash-content">
         <div class="splash-logo">
@@ -24,7 +24,7 @@ export class SplashScreen extends UIPanel {
               <circle cx="32" cy="32" r="8" fill="${CONFIG.colors.primary}" opacity="0.8"/>
             </svg>
           </div>
-          <h1 class="splash-title">ASMR Sleep</h1>
+          <h1 class="splash-title">ASMR Sleeps</h1>
         </div>
         <p class="splash-tagline">Relax. Breathe. Sleep.</p>
         <div class="splash-loader" aria-hidden="true">

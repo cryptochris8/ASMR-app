@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.asmrsleep.app',
-  appName: 'ASMR Sleep',
+  appId: 'com.athletedomains.asmrsleep',
+  appName: 'ASMR Sleeps',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: 'automatic',
     preferredContentMode: 'mobile',
-    scheme: 'ASMR Sleep',
+    scheme: 'ASMR Sleeps',
   },
   plugins: {
     SplashScreen: {

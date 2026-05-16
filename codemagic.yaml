@@ -1,0 +1,97 @@
+# Codemagic build pipelines for the ASMR Sleep App.
+#
+# Manual setup before the first run will succeed:
+#   1. In App Store Connect, create the app entry with bundle ID
+#      com.athletedomains.asmrsleep and grab its numeric Apple ID. Drop it into
+#      APP_STORE_APPLE_ID below.
+#   2. In Codemagic: Teams -> Integrations -> App Store Connect, add an
+#      API key. Name it `asmr-app-store-key` (or change the name below to
+#      match what you used).
+#   3. (Optional) Create a TestFlight beta group in App Store Connect and
+#      uncomment beta_groups at the bottom to auto-distribute on upload.
+#
+# ios/ is intentionally gitignored — Capacitor regenerates it on every
+# Codemagic build, so this workflow runs `cap add ios` before syncing.
+
+workflows:
+  ios-testflight:
+    name: iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    integrations:
+      app_store_connect: asmr-app-store-key
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.athletedomains.asmrsleep
+      vars:
+        APP_STORE_APPLE_ID: 6769982115
+        BUNDLE_ID: com.athletedomains.asmrsleep
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: 20.11.0
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+
+      - name: Build web bundle
+        script: npm run build
+
+      - name: Add and sync iOS platform
+        script: |
+          if [ ! -d "ios" ]; then
+            npx cap add ios
+          fi
+          npx cap sync ios
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios/App
+          pod install
+
+      - name: Set build number from App Store Connect
+        script: |
+          cd ios/App
+          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo "0")
+          NEW_BUILD=$((LATEST_BUILD + 1))
+          agvtool new-version -all $NEW_BUILD
+
+      - name: Initialize keychain
+        script: keychain initialize
+
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+
+      - name: Add certificates to keychain
+        script: keychain add-certificates
+
+      - name: Apply signing settings to Xcode project
+        script: xcode-project use-profiles
+
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # Uncomment once you have a beta group set up in TestFlight to
+        # auto-distribute after Apple's processing finishes:
+        # beta_groups:
+        #   - Internal Testers

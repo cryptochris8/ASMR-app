@@ -47,7 +47,7 @@ export class HomeScreen extends UIPanel {
 
     this.element.innerHTML = `
       <header class="home-header">
-        <h1 class="home-title">ASMR Sleep</h1>
+        <h1 class="home-title">ASMR Sleeps</h1>
         ${isPremium ? '<span class="home-premium-badge" aria-label="Premium subscription active">PREMIUM</span>' : ''}
         <button type="button" class="home-settings-btn" aria-label="Open settings">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${CONFIG.colors.textMuted}" stroke-width="1.5" aria-hidden="true" focusable="false">
