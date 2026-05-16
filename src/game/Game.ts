@@ -293,8 +293,10 @@ export class Game {
       return;
     }
 
-    // Unlock audio on first interaction (user gesture context)
-    this.audioManager.unlock();
+    // Unlock audio on first interaction (user gesture context). MUST be
+    // awaited on iOS — fire-and-forget can leave the AudioContext still
+    // 'suspended' when the first playTap fires, producing silent no-ops.
+    await this.audioManager.unlock();
 
     // Enable gyroscope (iOS requires user gesture for permission)
     this.gyroLook.enable();
@@ -382,7 +384,12 @@ export class Game {
     const scene = this.sceneController.current();
     if (!scene) return null;
     const { ndcX, ndcY } = this.screenToNDC(x, y);
-    return scene.hitTest(new THREE.Vector2(ndcX, ndcY));
+    // Hotspot scenes need the TOTAL applied skybox rotation (baked +
+    // runtime swipe-pan offset), otherwise taps after a swipe land in the
+    // wrong angular position because the resolver subtracts the wrong amount.
+    const sceneDef = getScene(this.store.state.activeScene);
+    const totalRotationY = (sceneDef?.skyboxRotationY ?? 0) + this.gyroLook.getYawOffset();
+    return scene.hitTest(new THREE.Vector2(ndcX, ndcY), totalRotationY);
   }
 
   private setupInput(): void {

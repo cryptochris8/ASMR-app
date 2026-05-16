@@ -17,6 +17,13 @@ export interface IScene {
   readonly group: THREE.Object3D;
   init(params: SceneInitParams): Promise<void> | void;
   update(dt: number): void;
-  hitTest(ndc: THREE.Vector2): HitResult | null;
+  /**
+   * @param currentSkyboxRotationY  total applied skybox rotation in radians,
+   *   including any runtime swipe-pan offset on top of the baked
+   *   `skyboxRotationY`. Hotspot scenes must use this (NOT the baked value)
+   *   when resolving angular hit positions or every tap after a swipe lands
+   *   in the wrong place. Non-hotspot scenes can ignore it.
+   */
+  hitTest(ndc: THREE.Vector2, currentSkyboxRotationY?: number): HitResult | null;
   dispose(): void;
 }

@@ -89,14 +89,14 @@ export class ApothecaryShopScene implements IScene {
     // Static skybox — no per-frame work
   }
 
-  hitTest(ndc: THREE.Vector2): HitResult | null {
+  hitTest(ndc: THREE.Vector2, currentSkyboxRotationY?: number): HitResult | null {
     if (!this._camera) return null;
     this._ndc.set(ndc.x, ndc.y);
     this.raycaster.setFromCamera(this._ndc, this._camera);
 
     const sceneDef = getScene(this.id);
-    const skyboxRotationY = sceneDef?.skyboxRotationY ?? 0;
-    const hit = resolveHotspot(this.raycaster.ray.direction, skyboxRotationY, getHotspots(this.id));
+    const rotationY = currentSkyboxRotationY ?? sceneDef?.skyboxRotationY ?? 0;
+    const hit = resolveHotspot(this.raycaster.ray.direction, rotationY, getHotspots(this.id));
     if (!hit) return null;
     return { surface: hit.surface };
   }

@@ -62,18 +62,21 @@ export class InputSystem {
   }
 
   private onPointerDown(e: PointerEvent): void {
-    // Only handle pointer events that originate on the canvas (or fall through
-    // to the container). UI overlays (mixer sliders, settings buttons, timer
-    // modal, etc.) are children of the same container and would otherwise
-    // bubble in and trigger swipe-to-pan or hotspot taps when the user is just
-    // adjusting a slider.
+    // Reject only if the tap originated inside a UI control. Everything else
+    // (canvas, container, transparent overlays, the body) is accepted as a
+    // valid scene-interaction target.
     //
-    // iOS WKWebView quirk: when a tap lands on a click-through overlay
-    // (pointer-events: none), the target on iOS sometimes resolves to the
-    // container itself rather than the underlying canvas, so we accept both.
+    // Why this shape: iOS WKWebView is inconsistent about what
+    // `event.target` resolves to when a tap lands on a click-through
+    // overlay (pointer-events: none) — sometimes the underlying canvas,
+    // sometimes the container, sometimes the overlay element itself. A
+    // strict `tagName === 'CANVAS'` check silently drops every tap on
+    // device. A reject-list of clickable controls preserves the original
+    // "don't leak UI taps into pan/tap" guarantee without making
+    // assumptions about which element iOS picks.
     const target = e.target as HTMLElement | null;
     if (!target) return;
-    if (target.tagName !== 'CANVAS' && target !== this.container) return;
+    if (target.closest('button, input, select, textarea, a, [role="button"], [role="slider"]')) return;
 
     e.preventDefault();
     this.pointerDown = true;
