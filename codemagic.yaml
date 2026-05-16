@@ -110,8 +110,17 @@ workflows:
           set -e
           XCODEPROJ_DIR=$(dirname $(find ios -name "App.xcodeproj" -type d | head -1))
           cd "$XCODEPROJ_DIR"
-          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo "0")
+          # Query BOTH TestFlight and App Store and take the max — querying
+          # only App Store misses TestFlight-only uploads on apps that aren't
+          # publicly released yet, which causes "bundle version 1 already
+          # used" errors on every brand-new app.
+          TF_BUILD=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo "0")
+          AS_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo "0")
+          [[ "$TF_BUILD" =~ ^[0-9]+$ ]] || TF_BUILD=0
+          [[ "$AS_BUILD" =~ ^[0-9]+$ ]] || AS_BUILD=0
+          LATEST_BUILD=$(( TF_BUILD > AS_BUILD ? TF_BUILD : AS_BUILD ))
           NEW_BUILD=$((LATEST_BUILD + 1))
+          echo "TestFlight latest: $TF_BUILD, App Store latest: $AS_BUILD, using new build #$NEW_BUILD"
           agvtool new-version -all $NEW_BUILD
 
       - name: Apply signing profiles to Xcode project
