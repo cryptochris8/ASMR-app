@@ -42,7 +42,7 @@ workflows:
         APPLE_TEAM_ID: Q3UH3Y4QUU
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
-      node: 20.11.0
+      node: 22.11.0
       xcode: latest
       cocoapods: default
 
